@@ -2,6 +2,23 @@ import json
 import urllib.request
 import urllib.parse
 import time
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+# --- Mini Web Sunucusu (Render Port Uyarısını Çözmek İçin) ---
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot is active and running 24/7!")
+
+def run_server():
+    server = HTTPServer(('0.0.0.0', 10000), SimpleHandler)
+    server.serve_forever()
+
+# Web sunucusunu arka planda (ayrı bir kolda) başlatıyoruz
+threading.Thread(target=run_server, daemon=True).start()
+# -------------------------------------------------------------
 
 TOKEN = "8989644682:AAGBeZGT-XZgTaYMXYEoMr2me8sNIjoGzzE".strip()
 ADMIN_ID = 8578298882
@@ -147,7 +164,7 @@ if check_bot():
                     edit_message(chat_id, message_id, "⚡️ **UDID Gönderim Ekranı**\n\nSafari'den **`get.ud.me`** adresine girip UDID'ni kopyala ve **doğrudan bu sohbete mesaj olarak yaz!**", back_keyboard)
                 elif data == "benefits":
                     edit_message(chat_id, message_id, "🛡 **Avantajlar:**\n• Bilgisayarsız IPA kurulumu\n• Sınırsız uygulama\n• Esign, Scarlet ve GBox uyumu", back_keyboard)
-                elif data3 := "tools" and data == "tools":
+                elif data == "tools":
                     edit_message(chat_id, message_id, "🛠 **Araçlar:**\n1️⃣ Esign\n2️⃣ Scarlet\n3️⃣ GBox", back_keyboard)
                 elif data == "faq":
                     edit_message(chat_id, message_id, "❓ **SSS:**\nSertifikanız 1-3 saat içinde aktifleşir.\n\nİletişim: @devolepercertificate", back_keyboard)
