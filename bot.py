@@ -103,10 +103,10 @@ def daveti_onayla_ve_ver(chat_id, first_name, username):
                 kullanici_verileri[davet_eden]["referrals"] += 1
                 ref_sayisi = kullanici_verileri[davet_eden]["referrals"]
                 
-                send_message(davet_eden, f"🎉 **Tebrikler!** Davet ettiğin kişi kanallara katıldı ve doğrulandı **(+1 Davet Eklendi)**.\n🔥 Toplam davet sayın: **{ref_sayisi} / 15**")
+                send_message(davet_eden, f"💎 **ULTRA VIP DAVET SİSTEMİ**\n\n🎉 Davet ettiğin kullanıcı resmi kanallara katıldı ve doğrulandı!\n➕ **Hesabına +1 VIP Puan Eklendi.**\n🔥 Toplam İlerlemen: **{ref_sayisi} / 15**")
                 
                 if ref_sayisi >= 15:
-                    send_message(ADMIN_ID, f"🏆 **ÖDÜL KAZANAN ÇIKTI!**\n\n👤 Kullanıcı: {first_name} (@{username})\n🆔 ID: `{davet_eden}`\n🔥 15 arkadaşını davet etti ve ücretsiz sertifika hakkı kazandı!")
+                    send_message(ADMIN_ID, f"🏆 **KRİTİK BAŞARI: 15 DAVET TAMAMLANDI!**\n\n👤 Kullanıcı: {first_name} (@{username})\n🆔 ID: `{davet_eden}`\n🔥 Ücretsiz VIP Sertifika hakkını kazandı!")
 
 def check_bot():
     try:
@@ -121,39 +121,44 @@ def check_bot():
         print("❌ Bağlantı Hatası:", e)
         return False
 
+# Gelişmiş, Ultra Prestijli Ana Menü
 main_menu = {
     "inline_keyboard": [
-        [{"text": "💎 Vip Sertifika Al", "url": "https://www.shopier.com/iOSEsingTR"}, {"text": "⚡️ UDID Gönder", "callback_data": "send_udid_info"}],
-        [{"text": "📱 UDID Nereden Bakılır?", "callback_data": "udid_nasil_bakilir"}],
-        [{"text": "🎁 15 Davet Et, Ücretsiz Al!", "callback_data": "davet_menu"}, {"text": "🤖 AI Asistan", "callback_data": "ai_menu"}],
-        [{"text": "🛠 Araçlar & Uygulamalar", "callback_data": "tools"}, {"text": "🛡 Avantajlar", "callback_data": "benefits"}],
-        [{"text": "❓ SSS", "callback_data": "faq"}, {"text": "💬 Canlı Destek (Admin)", "url": "https://t.me/devolepercertificate"}]
+        [{"text": "💎 VIP Sertifika Satın Al", "url": "https://www.shopier.com/iOSEsingTR"}, {"text": "⚡️ UDID Kaydı Gönder", "callback_data": "send_udid_info"}],
+        [{"text": "⭐ VIP Profilim & Kartım", "callback_data": "vip_profile"}, {"text": "🏆 Liderlik Tablosu", "callback_data": "vip_leaderboard"}],
+        [{"text": "🎁 15 Davet Et, Ücretsiz Al!", "callback_data": "davet_menu"}, {"text": "🤖 VIP AI Asistan", "callback_data": "ai_menu"}],
+        [{"text": "🛠 İmza Araçları & IPA", "callback_data": "tools"}, {"text": "🛡 VIP Avantajları & Garanti", "callback_data": "benefits"}],
+        [{"text": "❓ SSS", "callback_data": "faq"}, {"text": "💬 Canlı VIP Destek", "url": "https://t.me/devolepercertificate"}]
     ]
 }
 
 admin_menu = {
     "inline_keyboard": [
-        [{"text": "📊 Bot İstatistikleri", "callback_data": "admin_stats"}],
-        [{"text": "📢 Toplu Duyuru Gönder", "callback_data": "admin_broadcast_prompt"}],
-        [{"text": "🔙 Ana Menüye Dön", "callback_data": "main_menu"}]
+        [{"text": "📊 VIP Bot İstatistikleri", "callback_data": "admin_stats"}, {"text": "📢 Toplu VIP Duyurusu", "callback_data": "admin_broadcast_prompt"}],
+        [{"text": "🔗 Zorunlu Kanalları İncele", "callback_data": "admin_channels"}, {"text": "🔄 API Sağlık Testi", "callback_data": "admin_test"}],
+        [{"text": "🔙 Normal Ana Menüye Dön", "callback_data": "main_menu"}]
     ]
 }
 
 back_keyboard = {
-    "inline_keyboard": [[{"text": "🔙 Ana Menüye Dön", "callback_data": "main_menu"}]]
+    "inline_keyboard": [[{"text": "🔙 Yönetim Paneline Dön", "callback_data": "admin_panel_back"}]]
+}
+
+main_back_keyboard = {
+    "inline_keyboard": [[{"text": "🔙 VIP Ana Menüye Dön", "callback_data": "main_menu"}]]
 }
 
 ai_chat_keyboard = {
     "inline_keyboard": [
-        [{"text": "💰 Fiyat Nedir?", "callback_data": "ai_fiyat"}, {"text": "📱 UDID Nasıl Bulunur?", "callback_data": "ai_udid"}],
-        [{"text": "🛡 Güvenilir mi?", "callback_data": "ai_guven"}, {"text": "⏳ Süreç Kaç Saat?", "callback_data": "ai_sure"}],
-        [{"text": "🔙 Ana Menüye Dön", "callback_data": "main_menu"}]
+        [{"text": "💰 Fiyatlandırma Nedir?", "callback_data": "ai_fiyat"}, {"text": "📱 UDID Nasıl Bulunur?", "callback_data": "ai_udid"}],
+        [{"text": "🛡 Sistem Güvenilir mi?", "callback_data": "ai_guven"}, {"text": "⏳ Süreç Ne Kadar Sürer?", "callback_data": "ai_sure"}],
+        [{"text": "🔙 VIP Ana Menüye Dön", "callback_data": "main_menu"}]
     ]
 }
 
 if check_bot():
-    print("🚀 Bot Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı ve Hazır!**\n\nSunucu portu açık, sistem sorunsuz çalışıyor.")
+    print("🚀 Ultra VIP Bot Aktif ve Çalışıyor...")
+    send_message(ADMIN_ID, "🚀 **Ultra VIP Sertifika Botu Başlatıldı!**\n\nPrestijli arayüz, liderlik tablosu ve gelişmiş denetimler aktif.")
 
     offset = None
 
@@ -175,13 +180,13 @@ if check_bot():
                         gonderilen = 0
                         for uid in list(kullanici_verileri.keys()):
                             if uid != ADMIN_ID:
-                                send_message(uid, f"📢 **Duyuru / Güncelleme:**\n\n{duyuru_metni}")
+                                send_message(uid, f"💎 **ULTRA VIP DUYURU & GÜNCELLEME**\n\n{duyuru_metni}")
                                 gonderilen += 1
-                        send_message(ADMIN_ID, f"✅ Duyuru başarıyla **{gonderilen}** kullanıcıya iletildi.")
+                        send_message(ADMIN_ID, f"✅ VIP Duyuru başarıyla **{gonderilen}** aktif kullanıcıya iletildi.")
                         continue
 
                     if text.startswith("/admin") and chat_id == ADMIN_ID:
-                        send_message(ADMIN_ID, "👑 **Admin Paneline Hoş Geldin!**\n\nAşağıdaki yönetim panelinden botu kontrol edebilirsin:", admin_menu)
+                        send_message(ADMIN_ID, "👑 **Ultra VIP Yönetim Paneline Hoş Geldin!**\n\nSistemi tam yetkiyle yönetmek için aşağıdaki paneli kullanabilirsin:", admin_menu)
                         continue
 
                     if text.startswith("/start"):
@@ -191,7 +196,7 @@ if check_bot():
                             kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
                             toplam_kullanici = len(kullanici_verileri)
                             admin_mesaji = (
-                                f"👤 **Yeni Kullanıcı Katıldı!**\n\n"
+                                f"👤 **Yeni VIP Adayı Katıldı!**\n\n"
                                 f"📌 Sıra: **{toplam_kullanici}. Kullanıcı**\n"
                                 f"İsim: {first_name}\n"
                                 f"Kullanıcı Adı: @{username}\n"
@@ -208,7 +213,7 @@ if check_bot():
                                     kullanici_verileri[chat_id]["davet_eden"] = davet_eden_id
 
                         if chat_id == ADMIN_ID:
-                            send_message(ADMIN_ID, "👑 **Admin Olarak Botu Başlattın!**\n\nYönetim paneline erişmek için /admin yazabilirsin.", main_menu)
+                            send_message(ADMIN_ID, "👑 **Admin Olarak Oturum Açıldı!**\n\nPaneli açmak için /admin komutunu gönderebilirsin.", main_menu)
                             continue
 
                         if not kanallari_kontrol_et(chat_id):
@@ -221,105 +226,144 @@ if check_bot():
                                     [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
                                 ]
                             }
-                            send_message(chat_id, "⚠️ **Eksik Abonelik!** Botu kullanabilmek için yukarıdaki kanallarımıza eksiksiz abone olmanız gerekmektedir.", sub_keyboard)
+                            send_message(chat_id, "⚠️ **Eksik VIP Abonelik!** Botun ayrıcalıklı özelliklerinden faydalanabilmek için yukarıdaki resmi kanallarımıza abone olmalısınız.", sub_keyboard)
                         else:
                             daveti_onayla_ve_ver(chat_id, first_name, username)
-                            send_message(chat_id, "✨ **Merhaba !**\n\n👑 Apple Developer VIP Ekosistemine hoş geldin.\n\n🚀 Cihazını özgürleştirmek için aşağıdaki modern menüyü kullanabilir veya AI Asistan ile merak ettiklerini anında sorabilirsin:", main_menu)
+                            send_message(chat_id, "✨ **Apple Developer Ultra VIP Ekosistemine Hoş Geldin!**\n\n👑 Cihazını tamamen özgürleştirmek, imza araçlarına erişmek ve özel ayrıcalıklardan yararlanmak için aşağıdaki prestijli menüyü kullanabilirsin:", main_menu)
 
-                elif "callback_query" in update:
-                    cq = update["callback_query"]
-                    cq_id = cq["id"]
-                    chat_id = cq["message"]["chat"]["id"]
-                    message_id = cq["message"]["message_id"]
-                    data = cq["data"]
-                    first_name = cq["from"].get("first_name", "İsimsiz")
-                    username = cq["from"].get("username", "Kullanıcı adı yok")
-                    
-                    answer_callback_query(cq_id)
-                    
-                    if chat_id != ADMIN_ID and not kanallari_kontrol_et(chat_id) and data != "check_subscription":
-                        sub_keyboard = {
-                            "inline_keyboard": [
-                                [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
-                                [{"text": "📢 IPA Onay Kanalı", "url": "https://t.me/ipaonay"}],
-                                [{"text": "📢 iOS IPA Dosyaları", "url": "https://t.me/iosipadosyalari"}],
-                                [{"text": "📢 iOSEsignTR Kanalı", "url": "https://t.me/iOSEsignTR"}],
-                                [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
-                            ]
-                        }
-                        edit_message(chat_id, message_id, "⚠️ **Kanallardan ayrıldığınız tespit edildi!** Devam etmek için lütfen tekrar kanallara katılın:", sub_keyboard)
-                        continue
+            elif "callback_query" in update:
+                cq = update["callback_query"]
+                cq_id = cq["id"]
+                chat_id = cq["message"]["chat"]["id"]
+                message_id = cq["message"]["message_id"]
+                data = cq["data"]
+                first_name = cq["from"].get("first_name", "İsimsiz")
+                username = cq["from"].get("username", "Kullanıcı adı yok")
+                
+                answer_callback_query(cq_id)
+                
+                if chat_id != ADMIN_ID and not kanallari_kontrol_et(chat_id) and data != "check_subscription":
+                    sub_keyboard = {
+                        "inline_keyboard": [
+                            [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
+                            [{"text": "📢 IPA Onay Kanalı", "url": "https://t.me/ipaonay"}],
+                            [{"text": "📢 iOS IPA Dosyaları", "url": "https://t.me/iosipadosyalari"}],
+                            [{"text": "📢 iOSEsignTR Kanalı", "url": "https://t.me/iOSEsignTR"}],
+                            [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
+                        ]
+                    }
+                    edit_message(chat_id, message_id, "⚠️ **Güvenlik Uyarısı: Kanallardan ayrıldığınız tespit edildi!** Botu kullanmaya devam edebilmek için lütfen tekrar katılın:", sub_keyboard)
+                    continue
 
-                    if data == "main_menu":
-                        if chat_id == ADMIN_ID:
-                            edit_message(chat_id, message_id, "✨ **Ana Menü (Admin Görünümü):**", main_menu)
-                        else:
-                            edit_message(chat_id, message_id, "✨ **Ana Menü:**\n\nCihazını özgürleştirmek için aşağıdaki seçenekleri kullanabilirsin:", main_menu)
+                if data == "main_menu":
+                    if chat_id == ADMIN_ID:
+                        edit_message(chat_id, message_id, "✨ **Ultra VIP Ana Menü (Admin Görünümü):**\n\nYönetim paneline dönmek için /admin yazabilirsin.", main_menu)
+                    else:
+                        edit_message(chat_id, message_id, "✨ **Ultra VIP Ana Menü:**\n\nCihazını özgürleştirmek için aşağıdaki seçenekleri kullanabilirsin:", main_menu)
+                
+                elif data == "admin_panel_back" and chat_id == ADMIN_ID:
+                    edit_message(chat_id, message_id, "👑 **Ultra VIP Yönetim Paneli:**", admin_menu)
+
+                elif data == "admin_stats" and chat_id == ADMIN_ID:
+                    toplam_kullanici = len(kullanici_verileri)
+                    istatistik_metni = (
+                        f"📊 **VIP İstatistik ve Durum Paneli**\n\n"
+                        f"👥 Toplam Tekil Kullanıcı: **{toplam_kullanici}**\n"
+                        f"🛡 Sistem Güvenliği: **Anti-Spam Korumalı / Aktif**\n\n"
+                        f"📌 **Son Kayıt Olan VIP Adayları:**\n"
+                    )
+                    son_kullanicilar = list(kullanici_verileri.items())[-10:]
+                    for uid, udata in son_kullanicilar:
+                        istatistik_metni += f"• {udata['first_name']} (@{udata['username']}) - Davet: {udata['referrals']}\n"
+                    edit_message(chat_id, message_id, istatistik_metni, back_keyboard)
+
+                elif data == "admin_broadcast_prompt" and chat_id == ADMIN_ID:
+                    edit_message(chat_id, message_id, "📢 **Toplu VIP Duyuru Gönderimi:**\n\nTüm kullanıcılara anlık bildirim göndermek için sohbete:\n`/duyuru Mesajınız`\nşeklinde yazıp gönderebilirsin.", back_keyboard)
+
+                elif data == "admin_channels" and chat_id == ADMIN_ID:
+                    kanal_listesi = "\n".join([f"• @{k}" for k in ZORUNLU_KANALLAR])
+                    edit_message(chat_id, message_id, f"🔗 **Aktif Zorunlu Kanal Denetimi:**\n\n{kanal_listesi}\n\n🛡 Otomatik denetim mekanizması devrede.", back_keyboard)
+
+                elif data == "admin_test" and chat_id == ADMIN_ID:
+                    durum = "✅ Kararlı ve Çalışıyor" if check_bot() else "❌ Kritik Hata"
+                    edit_message(chat_id, message_id, f"🔄 **API & Sunucu Sağlık Testi:**\n\nDurum: {durum}\nBağlantı Türü: HTTPS / 24/7 Render", back_keyboard)
+
+                elif data == "vip_profile":
+                    davet_sayisi = kullanici_verileri.get(chat_id, {}).get("referrals", 0)
+                    profil_metni = (
+                        f"👤 **Ultra VIP Kullanıcı Profil Kartı**\n\n"
+                        f"🆔 Telegram ID: `{chat_id}`\n"
+                        f"⭐ Üst Düzey Rütbe: **Elmas VIP Adayı**\n"
+                        f"🎁 Mevcut Davet Puanın: **{davet_sayisi} / 15**\n"
+                        f"🛡 Sertifika Hakkı Limiti: **1 / 1**\n\n"
+                        f"💎 *Sistem tarafından güvenliğiniz onaylanmıştır.*"
+                    )
+                    edit_message(chat_id, message_id, profil_metni, main_back_keyboard)
+
+                elif data == "vip_leaderboard":
+                    # En çok davet yapan ilk 3 kişiyi sıralayalım
+                    sirali_kullanicilar = sorted(kullanici_verileri.items(), key=lambda x: x[1].get("referrals", 0), reverse=True)[:3]
+                    lb_metni = "🏆 **Ultra VIP Liderlik Tablosu**\n\nEn çok arkadaşını davet eden prestijli üyelerimiz:\n\n"
+                    if not sirali_kullanicilar or sirali_kullanicilar[0][1].get("referrals", 0) == 0:
+                        lb_metni += "📌 Henüz liderlik tablosunda listelenen aktif veri bulunmuyor. İlk sıra senin olabilir!"
+                    else:
+                         sira = 1
+                         emojiler = ["🥇", "🥈", "🥉"]
+                         for uid, udata in sirali_kullanicilar:
+                             if udata.get("referrals", 0) > 0:
+                                 lb_metni += f"{emojiler[sira-1]} {udata['first_name']} — **{udata['referrals']} Davet**\n"
+                                 sira += 1
+                    edit_message(chat_id, message_id, lb_metni, main_back_keyboard)
+
+                elif data == "send_udid_info":
+                    edit_message(chat_id, message_id, "⚡️ **UDID Kayıt & Gönderim Rehberi:**\n\nSertifikanın Apple sistemlerine kusursuz tanımlanabilmesi için UDID numaranızı destek hattımıza iletmeniz gerekmektedir.", main_back_keyboard)
+                elif data == "udid_nasil_bakilir":
+                    edit_message(chat_id, message_id, "📱 **UDID Nereden ve Nasıl Bulunur?**\n\nSafari tarayıcınızdan güvenli UDID öğrenme araçlarını kullanarak 40 haneli numaranızı kolayca kopyalayabilirsiniz.", main_back_keyboard)
+                elif data == "davet_menu":
+                    ref_link = f"https://t.me/SertifikaMagazaBot?start={chat_id}"
+                    davet_sayisi = kullanici_verileri.get(chat_id, {}).get("referrals", 0)
                     
-                    elif data == "admin_stats" and chat_id == ADMIN_ID:
-                        toplam_kullanici = len(kullanici_verileri)
-                        istatistik_metni = (
-                            f"📊 **Admin İstatistik Paneli**\n\n"
-                            f"👥 Toplam Tekil Kullanıcı: **{toplam_kullanici}**\n\n"
-                            f"📌 **Son Kayıt Olanlar:**\n"
+                    if davet_sayisi >= 15:
+                        davet_metni = (
+                            f"🎁 **15 Davet Et, Ücretsiz VIP Sertifika Al!**\n\n"
+                            f"🎉 **Tebrikler! 15 Davet Hedefine Ulaştın!**\n"
+                            f"✅ Başarılı bir şekilde tamamladın.\n"
+                            f"💬 Ödülünü alabilmek için **@devolepercertificate** ile iletişime geç!\n\n"
+                            f"🔥 **Mevcut Davetlerin:** {davet_sayisi} / 15\n\n"
+                            f"ℹ️ *Herkesin yalnızca 1 sertifika kazanma hakkı mevcuttur.*"
                         )
-                        son_kullanicilar = list(kullanici_verileri.items())[-10:]
-                        for uid, udata in son_kullanicilar:
-                            istatistik_metni += f"• {udata['first_name']} (@{udata['username']}) - Ref: {udata['referrals']}\n"
-                        edit_message(chat_id, message_id, istatistik_metni, admin_menu)
-
-                    elif data == "admin_broadcast_prompt" and chat_id == ADMIN_ID:
-                        edit_message(chat_id, message_id, "📢 **Toplu Duyuru Gönderme:**\n\nTüm kullanıcılara duyuru göndermek için sohbet kısmına:\n`/duyuru Mesajınız`\nşeklinde yazıp gönderebilirsin.", admin_menu)
-
-                    elif data == "send_udid_info":
-                        edit_message(chat_id, message_id, "⚡️ **UDID Gönderme Rehberi:**\n\nSertifikanın tanımlanabilmesi için cihazının UDID numarasını bize iletmen gerekiyor.", back_keyboard)
-                    elif data == "udid_nasil_bakilir":
-                        edit_message(chat_id, message_id, "📱 **UDID Nereden Bakılır?**\n\nSafari tarayıcından UDID öğrenme sitelerine girerek kolayca öğrenebilirsin.", back_keyboard)
-                    elif data == "davet_menu":
-                        ref_link = f"https://t.me/SertifikaMagazaBot?start={chat_id}"
-                        davet_sayisi = kullanici_verileri.get(chat_id, {}).get("referrals", 0)
-                        
-                        if davet_sayisi >= 15:
-                            davet_metni = (
-                                f"🎁 **15 Davet Et, Ücretsiz Sertifika Al!**\n\n"
-                                f"🎉 **Tebrikler! 15 Davet Hedefine Ulaştın!**\n"
-                                f"✅ Başarılı bir şekilde tamamladın.\n"
-                                f"💬 Ödülünü alabilmek için **@devolepercertificate** ile iletişime geç!\n\n"
-                                f"🔥 **Mevcut Davetlerin:** {davet_sayisi} / 15\n\n"
-                                f"ℹ️ *Herkesin yalnızca 1 sertifika kazanma hakkı mevcuttur.*"
-                            )
-                        else:
-                            davet_metni = (
-                                f"🎁 **15 Davet Et, Ücretsiz Sertifika Al!**\n\n"
-                                f"Arkadaşlarını davet et, 15 kişiye ulaştığında VIP Sertifikan bizden hediye!\n\n"
-                                f"🔗 **Senin Davet Linkin:**\n`{ref_link}`\n\n"
-                                f"🔥 **Mevcut Davetlerin:** {davet_sayisi} / 15\n\n"
-                                f"ℹ️ *Herkesin yalnızca 1 sertifika kazanma hakkı mevcuttur.*"
-                            )
-                        edit_message(chat_id, message_id, davet_metni, back_keyboard)
-                    elif data == "ai_menu":
-                        edit_message(chat_id, message_id, "🤖 **AI Asistan'a Hoş Geldin!**\n\nAşağıdaki hazır sorulardan birini seçerek anında bilgi alabilirsin:", ai_chat_keyboard)
-                    elif data == "tools":
-                        edit_message(chat_id, message_id, "🛠 **Araçlar & Uygulamalar:**\n\nSiedloading ve imzalama araçları hakkında bilgi alabilirsin.", back_keyboard)
-                    elif data == "benefits":
-                        edit_message(chat_id, message_id, "🛡 **VIP Avantajları:**\n\n• 1 Yıl Garantili Sertifika\n• Revoke durumunda ücretsiz değişim", back_keyboard)
-                    elif data == "faq":
-                        edit_message(chat_id, message_id, "❓ **Sık Sorulan Sorular (SSS):**\n\nSertifikanız ödeme sonrası kısa sürede aktif edilir.", back_keyboard)
-                    elif data == "check_subscription":
-                        if kanallari_kontrol_et(chat_id):
-                            daveti_onayla_ve_ver(chat_id, first_name, username)
-                            delete_message(chat_id, message_id)
-                            send_message(chat_id, "✨ **Harika! Kanallara katılımınız onaylandı.**", main_menu)
-                        else:
-                            send_message(chat_id, "⚠️ Henüz tüm açık kanallara abone olmamış görünüyorsun. Lütfen kontrol edip tekrar dene.")
-                    elif data in ["ai_fiyat", "ai_udid", "ai_guven", "ai_sure"]:
-                        cevaplar = {
-                            "ai_fiyat": "💰 VIP Sertifika fiyatımız Shopier mağazamızda sunulmaktadır.",
-                            "ai_udid": "📱 UDID, Apple cihazınıza ait özel 40 haneli bir kimlik numarasıdır.",
-                            "ai_guven": "🛡 Sistemimiz tamamen güvenlidir ve binlerce mutlu müşterimiz bulunmaktadır.",
-                            "ai_sure": "⏳ İşlemler genellikle ödeme onayından sonra kısa sürede tamamlanır."
-                        }
-                        edit_message(chat_id, message_id, cevaplar[data], ai_chat_keyboard)
+                    else:
+                        davet_metni = (
+                            f"🎁 **15 Davet Et, Ücretsiz VIP Sertifika Al!**\n\n"
+                            f"Arkadaşlarını davet et, 15 kişiye ulaştığında 1 Yıl Garantili VIP Sertifikan bizden hediye!\n\n"
+                            f"🔗 **Senin VIP Davet Linkin:**\n`{ref_link}`\n\n"
+                            f"🔥 **Mevcut Davetlerin:** {davet_sayisi} / 15\n\n"
+                            f"ℹ️ *Herkesin yalnızca 1 sertifika kazanma hakkı mevcuttur.*"
+                        )
+                    edit_message(chat_id, message_id, davet_metni, main_back_keyboard)
+                elif data == "ai_menu":
+                    edit_message(chat_id, message_id, "🤖 **Ultra VIP AI Destek Asistanı:**\n\nAşağıdaki akıllı konu başlıklarından birini seçerek anında profesyonel bilgi alabilirsin:", ai_chat_keyboard)
+                elif data == "tools":
+                    edit_message(chat_id, message_id, "🛠 **İmza Araçları & Uygulama Ekosistemi:**\n\nE-Sign, KSign ve GBox gibi popüler imzalama araçları hakkında detaylı rehberler.", main_back_keyboard)
+                elif data == "benefits":
+                    edit_message(chat_id, message_id, "🛡 **Ultra VIP Avantajları & Garanti Paketi:**\n\n• **1 Yıl Kesintisiz Garanti:** Süre boyunca güvenli kullanım.\n• **Ücretsiz Revoke Değişimi:** Olası iptallerde anında yeni sertifika.\n• **Öncelikli Destek:** 7/24 VIP hat üzerinden hızlı çözüm.", main_back_keyboard)
+                elif data == "faq":
+                    edit_message(chat_id, message_id, "❓ **Sık Sorulan Sorular (SSS):**\n\nSertifikanız ödeme veya ödül onayı sonrasında çok kısa bir süre içinde aktif edilmektedir.", main_back_keyboard)
+                elif data == "check_subscription":
+                    if kanallari_kontrol_et(chat_id):
+                        daveti_onayla_ve_ver(chat_id, first_name, username)
+                        delete_message(chat_id, message_id)
+                        send_message(chat_id, "✨ **Harika! Kanallara katılımınız başarıyla doğrulandı.**", main_menu)
+                    else:
+                        send_message(chat_id, "⚠️ Henüz tüm zorunlu kanallara abone olmamış görünüyorsun. Lütfen eksikleri tamamlayıp tekrar dene.")
+                elif data in ["ai_fiyat", "ai_udid", "ai_guven", "ai_sure"]:
+                    cevaplar = {
+                        "ai_fiyat": "💰 VIP Sertifika fiyatlarımız ve avantajlı paketlerimiz Shopier mağazamızda güvenle sunulmaktadır.",
+                        "ai_udid": "📱 UDID, Apple cihazınıza özel olarak atanan 40 haneli eşsiz bir donanım kimliğidir.",
+                        "ai_guven": "🛡 Altyapımız ve ödeme sistemimiz %100 güvenlidir. Binlerce mutlu kullanıcımız bulunmaktadır.",
+                        "ai_sure": "⏳ İşlemleriniz güvenlik doğrulamaları tamamlandıktan sonra çok kısa sürede sonuçlandırılır."
+                    }
+                    edit_message(chat_id, message_id, cevaplar[data], ai_chat_keyboard)
         except Exception as loop_err:
             print("Döngü hatası:", loop_err)
             time.sleep(3)
