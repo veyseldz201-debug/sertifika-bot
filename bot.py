@@ -23,6 +23,7 @@ TOKEN = "8989644682:AAGBeZGT-XZgTaYMXYEoMr2me8sNIjoGzzE".strip()
 ADMIN_ID = 8578298828
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
+# Kodun hata vermemesi için kontrol edilen açık kanallar
 ZORUNLU_KANALLAR = ["ipaonay", "iosipadosyalari", "iOSEsignTR"]
 kullanici_verileri = {}
 
@@ -131,7 +132,7 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 Bot Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nDavet linki @SertifikaMagazaBot olarak düzeltildi.")
+    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nÖzel davet kanalı ve @SertifikaMagazaBot linkleri güncellendi.")
     
     offset = None
 
@@ -179,6 +180,7 @@ if check_bot():
                     if not kanallari_kontrol_et(chat_id):
                         sub_keyboard = {
                             "inline_keyboard": [
+                                [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
                                 [{"text": "📢 IPA Onay Kanalı", "url": "https://t.me/ipaonay"}],
                                 [{"text": "📢 iOS IPA Dosyaları", "url": "https://t.me/iosipadosyalari"}],
                                 [{"text": "📢 iOSEsignTR Kanalı", "url": "https://t.me/iOSEsignTR"}],
@@ -221,7 +223,7 @@ if check_bot():
                         delete_message(chat_id, message_id)
                         send_message(chat_id, "✨ **Harika! Kanallara katılımınız onaylandı.**", main_menu)
                     else:
-                        send_message(chat_id, "⚠️ Henüz tüm kanallara abone olmamış görünüyorsun.")
+                        send_message(chat_id, "⚠️ Henüz tüm açık kanallara abone olmamış görünüyorsun.")
                 elif data in ["ai_fiyat", "ai_udid", "ai_guven", "ai_sure"]:
                     cevaplar = {
                         "ai_fiyat": "💰 VIP Sertifika fiyatımız Shopier mağazamızda sunulmaktadır.",
