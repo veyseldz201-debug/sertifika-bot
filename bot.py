@@ -158,52 +158,85 @@ if check_bot():
     offset = None
 
     while True:
-        updates = get_updates(offset)
-        for update in updates:
-            offset = update["update_id"] + 1
-            
-            if "message" in update:
-                msg = update["message"]
-                chat_id = msg["chat"]["id"]
-                text = msg.get("text", "")
-                first_name = msg["chat"].get("first_name", "İsimsiz")
-                username = msg["chat"].get("username", "Kullanıcı adı yok")
+        try:
+            updates = get_updates(offset)
+            for update in updates:
+                offset = update["update_id"] + 1
                 
-                if text.startswith("/duyuru ") and chat_id == ADMIN_ID:
-                    duyuru_metni = text[8:].strip()
-                    gonderilen = 0
-                    for uid in list(kullanici_verileri.keys()):
-                        if uid != ADMIN_ID:
-                            send_message(uid, f"📢 **Duyuru / Güncelleme:**\n\n{duyuru_metni}")
-                            gonderilen += 1
-                    send_message(ADMIN_ID, f"✅ Duyuru başarıyla **{gonderilen}** kullanıcıya iletildi.")
-                    continue
-
-                if text.startswith("/admin") and chat_id == ADMIN_ID:
-                    send_message(ADMIN_ID, "👑 **Admin Paneline Hoş Geldin!**\n\nAşağıdaki yönetim panelinden botu kontrol edebilirsin:", admin_menu)
-                    continue
-
-                if text.startswith("/start"):
-                    args = text.split()
+                if "message" in update:
+                    msg = update["message"]
+                    chat_id = msg["chat"]["id"]
+                    text = msg.get("text", "")
+                    first_name = msg["chat"].get("first_name", "İsimsiz")
+                    username = msg["chat"].get("username", "Kullanıcı adı yok")
                     
-                    if chat_id not in kullanici_verileri and chat_id != ADMIN_ID:
-                        kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
-                        toplam_kullanici = len(kullanici_verileri)
-                        admin_mesaji = (
-                            f"👤 **Yeni Kullanıcı Katıldı!**\n\n"
-                            f"📌 Sıra: **{toplam_kullanici}. Kullanıcı**\n"
-                            f"İsim: {first_name}\n"
-                            f"Kullanıcı Adı: @{username}\n"
-                            f"ID: `{chat_id}`"
-                        )
-                        send_message(ADMIN_ID, admin_mesaji)
-                    elif chat_id not in kullanici_verileri:
-                        kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
+                    if text.startswith("/duyuru ") and chat_id == ADMIN_ID:
+                        duyuru_metni = text[8:].strip()
+                        gonderilen = 0
+                        for uid in list(kullanici_verileri.keys()):
+                            if uid != ADMIN_ID:
+                                send_message(uid, f"📢 **Duyuru / Güncelleme:**\n\n{duyuru_metni}")
+                                gonderilen += 1
+                        send_message(ADMIN_ID, f"✅ Duyuru başarıyla **{gonderilen}** kullanıcıya iletildi.")
+                        continue
 
-                    if len(args) > 1 and args[1].isdigit():
-                        davet_eden_id = int(args[1])
-                        if davet_eden_id != chat_id and davet_eden_id in kullanici_verileri:
-                            if not kullanici_verileri[chat_id].get("davet_eden"):
-                                kullanici_verileri[chat_id]["davet_eden"] = davet_eden_id
+                    if text.startswith("/admin") and chat_id == ADMIN_ID:
+                        send_message(ADMIN_ID, "👑 **Admin Paneline Hoş Geldin!**\n\nAşağıdaki yönetim panelinden botu kontrol edebilirsin:", admin_menu)
+                        continue
 
-                    if chat_
+                    if text.startswith("/start"):
+                        args = text.split()
+                        
+                        if chat_id not in kullanici_verileri and chat_id != ADMIN_ID:
+                            kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
+                            toplam_kullanici = len(kullanici_verileri)
+                            admin_mesaji = (
+                                f"👤 **Yeni Kullanıcı Katıldı!**\n\n"
+                                f"📌 Sıra: **{toplam_kullanici}. Kullanıcı**\n"
+                                f"İsim: {first_name}\n"
+                                f"Kullanıcı Adı: @{username}\n"
+                                f"ID: `{chat_id}`"
+                            )
+                            send_message(ADMIN_ID, admin_mesaji)
+                        elif chat_id not in kullanici_verileri:
+                            kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
+
+                        if len(args) > 1 and args[1].isdigit():
+                            davet_eden_id = int(args[1])
+                            if davet_eden_id != chat_id and davet_eden_id in kullanici_verileri:
+                                if not kullanici_verileri[chat_id].get("davet_eden"):
+                                    kullanici_verileri[chat_id]["davet_eden"] = davet_eden_id
+
+                        if chat_id == ADMIN_ID:
+                            send_message(ADMIN_ID, "👑 **Admin Olarak Botu Başlattın!**\n\nYönetim paneline erişmek için /admin yazabilirsin.", main_menu)
+                            continue
+
+                        if not kanallari_kontrol_et(chat_id):
+                            sub_keyboard = {
+                                "inline_keyboard": [
+                                    [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
+                                    [{"text": "📢 IPA Onay Kanalı", "url": "https://t.me/ipaonay"}],
+                                    [{"text": "📢 iOS IPA Dosyaları", "url": "https://t.me/iosipadosyalari"}],
+                                    [{"text": "📢 iOSEsignTR Kanalı", "url": "https://t.me/iOSEsignTR"}],
+                                    [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
+                                ]
+                            }
+                            send_message(chat_id, "⚠️ **Eksik Abonelik!** Botu kullanabilmek için yukarıdaki kanallarımıza eksiksiz abone olmanız gerekmektedir.", sub_keyboard)
+                        else:
+                            daveti_onayla_ve_ver(chat_id, first_name, username)
+                            send_message(chat_id, "✨ **Merhaba !**\n\n👑 Apple Developer VIP Ekosistemine hoş geldin.\n\n🚀 Cihazını özgürleştirmek için aşağıdaki modern menüyü kullanabilir veya AI Asistan ile merak ettiklerini anında sorabilirsin:", main_menu)
+
+                elif "callback_query" in update:
+                    cq = update["callback_query"]
+                    cq_id = cq["id"]
+                    chat_id = cq["message"]["chat"]["id"]
+                    message_id = cq["message"]["message_id"]
+                    data = cq["data"]
+                    first_name = cq["from"].get("first_name", "İsimsiz")
+                    username = cq["from"].get("username", "Kullanıcı adı yok")
+                    
+                    answer_callback_query(cq_id)
+                    
+                    if chat_id != ADMIN_ID and not kanallari_kontrol_et(chat_id) and data != "check_subscription":
+                        sub_keyboard = {
+                            "inline_keyboard
