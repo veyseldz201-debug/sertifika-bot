@@ -3,9 +3,10 @@ import urllib.request
 import urllib.parse
 import time
 import threading
+import os
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-# --- Mini Web Sunucusu (Render Port Uyarısını Çözmek İçin) ---
+# --- Mini Web Sunucusu (Render Port ve Uyku Uyarısını Çözmek İçin) ---
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -13,7 +14,9 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.wfile.write(b"Bot is active and running 24/7!")
 
 def run_server():
-    server = HTTPServer(('0.0.0.0', 10000), SimpleHandler)
+    # Render'ın atadığı portu otomatik alır, yoksa 10000 kullanır
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(('0.0.0.0', port), SimpleHandler)
     server.serve_forever()
 
 # Web sunucusunu arka planda başlatıyoruz
@@ -64,6 +67,15 @@ def edit_message(chat_id, message_id, text, reply_markup=None):
             return json.loads(response.read().decode())
     except Exception as e:
         print("Düzenleme hatası:", e)
+
+def delete_message(chat_id, message_id):
+    data = {"chat_id": chat_id, "message_id": message_id}
+    req = urllib.request.Request(f"{BASE_URL}/deleteMessage", data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
+    try:
+        with urllib.request.urlopen(req) as response:
+            return json.loads(response.read().decode())
+    except:
+        pass
 
 def answer_callback_query(callback_query_id, text=""):
     data = {"callback_query_id": callback_query_id, "text": text, "show_alert": False}
@@ -129,7 +141,7 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 VIP Ekosistem Botu Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu aktif, callback özellikleri eklendi ve bot çalışmaya başladı.")
+    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu aktif, port ayarları güncellendi ve bot çalışmaya başladı.")
     
     offset = None
 
@@ -138,7 +150,6 @@ if check_bot():
         for update in updates:
             offset = update["update_id"] + 1
             
-            # 1. Normal Mesajlar (/start vb.)
             if "message" in update:
                 msg = update["message"]
                 chat_id = msg["chat"]["id"]
@@ -175,7 +186,6 @@ if check_bot():
                     else:
                         send_message(chat_id, "✨ **Merhaba !**\n\n👑 Apple Developer VIP Ekosistemine hoş geldin.\n\n🚀 Cihazını özgürleştirmek için aşağıdaki modern menüyü kullanabilir veya AI Asistan ile merak ettiklerini anında sorabilirsin:", main_menu)
 
-            # 2. Buton Tıklamaları (Callback Queries) - İŞTE BU KISIM EKSİKTİ
             elif "callback_query" in update:
                 cq = update["callback_query"]
                 cq_id = cq["id"]
@@ -195,7 +205,6 @@ if check_bot():
                     edit_message(chat_id, message_id, "📱 **UDID Nereden Bakılır?**\n\nSafari tarayıcından UDID öğrenme sitelerine girerek veya iTunes / Finder aracılığıyla iPhone UDID numaranı (40 haneli) kolayca öğrenebilirsin.", back_keyboard)
                 
                 elif data == "davet_menu":
-                    bot_username = "SertifikaBotun" # Bot kullanıcı adını buraya yazabilirsin
                     ref_link = f"https://t.me/iOSEsingTR_bot?start={chat_id}"
                     davet_sayisi = kullanici_verileri.get(chat_id, {}).get("referrals", 0)
                     edit_message(chat_id, message_id, f"🎁 **10 Davet Et, Ücretsiz Sertifika Al!**\n\nArkadaşlarını davet et, 10 kişiye ulaştığında VIP Sertifikan bizden hediye!\n\n🔗 **Senin Davet Linkin:**\n`{ref_link}`\n\n🔥 **Mevcut Davetlerin:** {davet_sayisi} / 10", back_keyboard)
@@ -207,7 +216,7 @@ if check_bot():
                     edit_message(chat_id, message_id, "🛠 **Araçlar & Uygulamalar:**\n\nSiedloading ve imzalama araçları (E-Sign, KSign, GBox, LCSign) hakkında güncel rehberler kanallarımızda paylaşılmaktadır.", back_keyboard)
                 
                 elif data == "benefits":
-                    edit_message(chat_id, message_id, "🛡 **VIP Avantajları:**\n\n• 1 Yıl Garantili Sertifika\n• Revoke (Sertifika patlaması) durumunda ücretsiz değişim\n• Hızlı UDID aktivasyonu", back_keyboard)
+                    edit_message(chat_id, message_id, "🛡 **VIP Avantajları:**\n\n• 1 Yıl Garantili Sertifika\n• Revoke durumunda ücretsiz değişim\n• Hızlı UDID aktivasyonu", back_keyboard)
                 
                 elif data == "faq":
                     edit_message(chat_id, message_id, "❓ **Sık Sorulan Sorular (SSS):**\n\n1. **Sertifika ne kadar sürede aktif olur?** Ödeme sonrası kısa süre içinde UDID'iniz işleme alınır.\n2. **Garanti var mı?** Evet, süre boyunca destek sağlanır.", back_keyboard)
