@@ -26,19 +26,6 @@ BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 ZORUNLU_KANALLAR = ["ipaonay", "iosipadosyalari", "iOSEsignTR"]
 kullanici_verileri = {}
 
-def check_bot():
-    try:
-        req = urllib.request.Request(f"{BASE_URL}/getMe")
-        with urllib.request.urlopen(req, timeout=10) as response:
-            res = json.loads(response.read().decode())
-            if res.get("ok"):
-                print(f"✅ Bot Aktif: @{res['result'].get('username')}")
-                return True
-            return False
-    except Exception as e:
-        print("❌ Bağlantı Hatası:", e)
-        return False
-
 def send_message(chat_id, text, reply_markup=None):
     data = {"chat_id": chat_id, "text": text, "parse_mode": "Markdown"}
     if reply_markup:
@@ -121,6 +108,19 @@ def daveti_onayla_ve_ver(chat_id, first_name, username):
                 if ref_sayisi >= 15:
                     send_message(ADMIN_ID, f"🏆 **ÖDÜL KAZANAN ÇIKTI!**\n\n👤 Kullanıcı: {first_name} (@{username})\n🆔 ID: `{davet_eden}`\n🔥 15 arkadaşını davet etti ve ücretsiz sertifika hakkı kazandı!")
 
+def check_bot():
+    try:
+        req = urllib.request.Request(f"{BASE_URL}/getMe")
+        with urllib.request.urlopen(req, timeout=10) as response:
+            res = json.loads(response.read().decode())
+            if res.get("ok"):
+                print(f"✅ Bot Aktif: @{res['result'].get('username')}")
+                return True
+            return False
+    except Exception as e:
+        print("❌ Bağlantı Hatası:", e)
+        return False
+
 main_menu = {
     "inline_keyboard": [
         [{"text": "💎 Vip Sertifika Al", "url": "https://www.shopier.com/iOSEsingTR"}, {"text": "⚡️ UDID Gönder", "callback_data": "send_udid_info"}],
@@ -134,7 +134,7 @@ main_menu = {
 admin_menu = {
     "inline_keyboard": [
         [{"text": "📊 Bot İstatistikleri", "callback_data": "admin_stats"}],
-        [{"text": "📢 Toplu Mesaj Duyurusu", "callback_data": "admin_broadcast_info"}],
+        [{"text": "📢 Toplu Duyuru Gönder", "callback_data": "admin_broadcast_prompt"}],
         [{"text": "🔙 Ana Menüye Dön", "callback_data": "main_menu"}]
     ]
 }
@@ -153,8 +153,11 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 Bot Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nAdmin paneli aktif (`/admin` yazarak erişebilirsin).")
     
+    # Bot güncellenip açıldığında kullanıcılara otomatik bildirim gönderelim
+    time.sleep(2)
+    send_message(ADMIN_ID, "🚀 **Bot Güncellendi ve Yeniden Başlatıldı!**\n\nKullanıcılara güncelleme bildirimi gönderiliyor...")
+
     offset = None
 
     while True:
@@ -169,6 +172,17 @@ if check_bot():
                 first_name = msg["chat"].get("first_name", "İsimsiz")
                 username = msg["chat"].get("username", "Kullanıcı adı yok")
                 
+                # Admin Toplu Duyuru Komutu (/duyuru <mesaj>)
+                if text.startswith("/duyuru ") and chat_id == ADMIN_ID:
+                    duyuru_metni = text[8:].strip()
+                    gonderilen = 0
+                    for uid in list(kullanici_verileri.keys()):
+                        if uid != ADMIN_ID:
+                            send_message(uid, f"📢 **Duyuru / Güncelleme:**\n\n{duyuru_metni}")
+                            gonderilen += 1
+                    send_message(ADMIN_ID, f"✅ Duyuru başarıyla **{gonderilen}** kullanıcıya iletildi.")
+                    continue
+
                 if text.startswith("/admin") and chat_id == ADMIN_ID:
                     send_message(ADMIN_ID, "👑 **Admin Paneline Hoş Geldin!**\n\nAşağıdaki yönetim panelinden botu kontrol edebilirsin:", admin_menu)
                     continue
@@ -187,6 +201,10 @@ if check_bot():
                             f"ID: `{chat_id}`"
                         )
                         send_message(ADMIN_ID, admin_mesaji)
+                        
+                        # Yeni kullanıcıya botun güncellendiğini / yenilendiğini hissettiren hoş geldin bildirimi
+                        send_message(chat_id, "🚀 **Bot Güncellendi!**\n\nEn yeni özellikler ve altyapı iyileştirmeleri aktif edildi. Botu sorunsuz kullanabilmek için /start komutuna basabilirsin.")
+                        
                     elif chat_id not in kullanici_verileri:
                         kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
 
@@ -200,6 +218,7 @@ if check_bot():
                         send_message(ADMIN_ID, "👑 **Admin Olarak Botu Başlattın!**\n\nYönetim paneline erişmek için /admin yazabilirsin.", main_menu)
                         continue
 
+                    # Her start veya işlemde kanal kontrolü yapılır (Çıkanlar tekrar engellenir)
                     if not kanallari_kontrol_et(chat_id):
                         sub_keyboard = {
                             "inline_keyboard": [
@@ -210,7 +229,7 @@ if check_bot():
                                 [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
                             ]
                         }
-                        send_message(chat_id, "⚠️ Botu kullanabilmek için yukarıdaki kanallarımıza abone olmanız gerekmektedir.", sub_keyboard)
+                        send_message(chat_id, "⚠️ **Eksik Abonelik!** Botu kullanabilmek için yukarıdaki kanallarımıza eksiksiz abone olmanız gerekmektedir.", sub_keyboard)
                     else:
                         daveti_onayla_ve_ver(chat_id, first_name, username)
                         send_message(chat_id, "✨ **Merhaba !**\n\n👑 Apple Developer VIP Ekosistemine hoş geldin.\n\n🚀 Cihazını özgürleştirmek için aşağıdaki modern menüyü kullanabilir veya AI Asistan ile merak ettiklerini anında sorabilirsin:", main_menu)
@@ -226,6 +245,20 @@ if check_bot():
                 
                 answer_callback_query(cq_id)
                 
+                # ÖNEMLİ GÜVENLİK: Admin dışındaki herkes butonlara basarken de kanallarda mı diye kontrol edilir!
+                if chat_id != ADMIN_ID and not kanallari_kontrol_et(chat_id) and data != "check_subscription":
+                    sub_keyboard = {
+                        "inline_keyboard": [
+                            [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
+                            [{"text": "📢 IPA Onay Kanalı", "url": "https://t.me/ipaonay"}],
+                            [{"text": "📢 iOS IPA Dosyaları", "url": "https://t.me/iosipadosyalari"}],
+                            [{"text": "📢 iOSEsignTR Kanalı", "url": "https://t.me/iOSEsignTR"}],
+                            [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
+                        ]
+                    }
+                    edit_message(chat_id, message_id, "⚠️ **Kanallardan ayrıldığınız tespit edildi!** Devam etmek için lütfen tekrar kanallara katılın:", sub_keyboard)
+                    continue
+
                 if data == "main_menu":
                     if chat_id == ADMIN_ID:
                         edit_message(chat_id, message_id, "✨ **Ana Menü (Admin Görünümü):**", main_menu)
@@ -244,8 +277,8 @@ if check_bot():
                         istatistik_metni += f"• {udata['first_name']} (@{udata['username']}) - Ref: {udata['referrals']}\n"
                     edit_message(chat_id, message_id, istatistik_metni, admin_menu)
 
-                elif data == "admin_broadcast_info" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, message_id, "📢 **Toplu Mesaj Bilgilendirmesi:**\n\nŞu an sistem hafıza tabanlı çalıştığı için tüm kullanıcılara anlık duyuru göndermek üzere /stats panelinden kullanıcı sayısını takip edebilirsin.", admin_menu)
+                elif data == "admin_broadcast_prompt" and chat_id == ADMIN_ID:
+                    edit_message(chat_id, message_id, "📢 **Toplu Duyuru Gönderme:**\n\nTüm kullanıcılara duyuru göndermek için sohbet kısmına:\n`/duyuru Mesajınız`\nşeklinde yazıp gönderebilirsin.", admin_menu)
 
                 elif data == "send_udid_info":
                     edit_message(chat_id, message_id, "⚡️ **UDID Gönderme Rehberi:**\n\nSertifikanın tanımlanabilmesi için cihazının UDID numarasını bize iletmen gerekiyor.", back_keyboard)
@@ -274,25 +307,4 @@ if check_bot():
                         )
                     edit_message(chat_id, message_id, davet_metni, back_keyboard)
                 elif data == "ai_menu":
-                    edit_message(chat_id, message_id, "🤖 **AI Asistan'a Hoş Geldin!**\n\nAşağıdaki hazır sorulardan birini seçerek anında bilgi alabilirsin:", ai_chat_keyboard)
-                elif data == "tools":
-                    edit_message(chat_id, message_id, "🛠 **Araçlar & Uygulamalar:**\n\nSiedloading ve imzalama araçları hakkında bilgi alabilirsin.", back_keyboard)
-                elif data == "benefits":
-                    edit_message(chat_id, message_id, "🛡 **VIP Avantajları:**\n\n• 1 Yıl Garantili Sertifika\n• Revoke durumunda ücretsiz değişim", back_keyboard)
-                elif data == "faq":
-                    edit_message(chat_id, message_id, "❓ **Sık Sorulan Sorular (SSS):**\n\nSertifikanız ödeme sonrası kısa sürede aktif edilir.", back_keyboard)
-                elif data == "check_subscription":
-                    if kanallari_kontrol_et(chat_id):
-                        daveti_onayla_ve_ver(chat_id, first_name, username)
-                        delete_message(chat_id, message_id)
-                        send_message(chat_id, "✨ **Harika! Kanallara katılımınız onaylandı.**", main_menu)
-                    else:
-                        send_message(chat_id, "⚠️ Henüz tüm açık kanallara abone olmamış görünüyorsun. Lütfen kontrol edip tekrar dene.")
-                elif data in ["ai_fiyat", "ai_udid", "ai_guven", "ai_sure"]:
-                    cevaplar = {
-                        "ai_fiyat": "💰 VIP Sertifika fiyatımız Shopier mağazamızda sunulmaktadır.",
-                        "ai_udid": "📱 UDID, Apple cihazınıza ait özel 40 haneli bir kimlik numarasıdır.",
-                        "ai_guven": "🛡 Sistemimiz tamamen güvenlidir ve binlerce mutlu müşterimiz bulunmaktadır.",
-                        "ai_sure": "⏳ İşlemler genellikle ödeme onayından sonra kısa sürede tamamlanır."
-                    }
-                    edit_message(chat_id, message_id, cevaplar[data], ai_chat_keyboard)
+                    edit_message(chat_id, message_id, "🤖 **AI Asistan'a Hoş Geldin!**\n\
