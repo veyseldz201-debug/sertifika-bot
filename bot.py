@@ -16,13 +16,21 @@ def run_server():
     server = HTTPServer(('0.0.0.0', 10000), SimpleHandler)
     server.serve_forever()
 
-# Web sunucusunu arka planda (ayrı bir kolda) başlatıyoruz
+# Web sunucusunu arka planda başlatıyoruz
 threading.Thread(target=run_server, daemon=True).start()
 # -------------------------------------------------------------
 
 TOKEN = "8989644682:AAGBeZGT-XZgTaYMXYEoMr2me8sNIjoGzzE".strip()
 ADMIN_ID = 8578298882
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
+
+# Zorunlu Kanallar Listesi (Kanal kullanıcı adları)
+# NOT: Botun bu kanallarda YÖNETİCİ olması gerekir!
+ZORUNLU_KANALLAR = ["iosipadosyalari", "iOSEsignTR"] 
+
+# Bellek tabanlı veritabanı (Davet ve kayıtlar için)
+# {user_id: {"referrals": 0, "username": "...", "first_name": "..."}}
+kullanici_verileri = {}
 
 def check_bot():
     try:
@@ -59,6 +67,15 @@ def edit_message(chat_id, message_id, text, reply_markup=None):
     except Exception as e:
         print("Düzenleme hatası:", e)
 
+def delete_message(chat_id, message_id):
+    data = {"chat_id": chat_id, "message_id": message_id}
+    req = urllib.request.Request(f"{BASE_URL}/deleteMessage", data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
+    try:
+        with urllib.request.urlopen(req) as response:
+            return json.loads(response.read().decode())
+    except:
+        pass
+
 def get_updates(offset=None):
     url = f"{BASE_URL}/getUpdates?timeout=30"
     if offset:
@@ -70,12 +87,32 @@ def get_updates(offset=None):
     except Exception as e:
         return []
 
+def kanallari_kontrol_et(user_id):
+    """Kullanıcının zorunlu kanallara katılıp katılmadığını kontrol eder"""
+    for kanal in ZORUNLU_KANALLAR:
+        try:
+            url = f"{BASE_URL}/getChatMember?chat_id=@{kanal}&user_id={user_id}"
+            req = urllib.request.Request(url)
+            with urllib.request.urlopen(req, timeout=10) as response:
+                res = json.loads(response.read().decode())
+                if res.get("ok"):
+                    status = res["result"].get("status")
+                    if status in ["left", "kicked"]:
+                        return False
+                else:
+                    return False
+        except Exception as e:
+            print(f"Kanal kontrol hatası (@{kanal}): {e}")
+            return False
+    return True
+
+# --- MENÜLER ---
 main_menu = {
     "inline_keyboard": [
         [{"text": "💎 VIP Sertifika (250₺)", "callback_data": "vip_cert"}, {"text": "⚡️ UDID Gönder", "callback_data": "send_udid_info"}],
-        [{"text": "🤖 AI Asistan Soru Sor", "callback_data": "ai_menu"}, {"text": "🛠 Araçlar", "callback_data": "tools"}],
-        [{"text": "🛡 Avantajlar", "callback_data": "benefits"}, {"text": "❓ SSS", "callback_data": "faq"}],
-        [{"text": "💬 Canlı Destek & Satın Al (Admin)", "url": "https://t.me/devolepercertificate"}]
+        [{"text": "🔗 Davet Et & Kazan", "callback_data": "davet_menu"}, {"text": "🤖 AI Asistan Soru Sor", "callback_data": "ai_menu"}],
+        [{"text": "🛠 Araçlar", "callback_data": "tools"}, {"text": "🛡 Avantajlar", "callback_data": "benefits"}],
+        [{"text": "❓ SSS", "callback_data": "faq"}, {"text": "💬 Canlı Destek (Admin)", "url": "https://t.me/devolepercertificate"}]
     ]
 }
 
@@ -91,8 +128,9 @@ ai_chat_keyboard = {
     ]
 }
 
+
 if check_bot():
-    print("🚀 Havalı VIP AI Bot Bildirim Sistemiyle Dinliyor...")
+    print("🚀 Havalı VIP AI Bot Davet ve Zorunlu Kanal Sistemiyle Dinliyor...")
     offset = None
     user_states = {}
 
@@ -108,10 +146,42 @@ if check_bot():
                 first_name = msg["chat"].get("first_name", "Değerli Müşterimiz")
                 username = msg["chat"].get("username", "Yok")
                 
-                if text == "/start":
+                if text.startswith("/start"):
                     user_states.pop(chat_id, None)
+                    args = text.split()
+                    
+                    # 1. Davet (Referral) Kontrolü
+                    davet_eden_id = None
+                    if len(args) > 1 and args[1].isdigit():
+                        davet_eden_id = int(args[1])
+                        if davet_eden_id != chat_id and chat_id not in kullanici_verileri:
+                            if davet_eden_id in kullanici_verileri:
+                                kullanici_verileri[davet_eden_id]["referrals"] += 1
+                                ref_sayisi = kullanici_verileri[davet_eden_id]["referrals"]
+                                # Davet eden kişiye bilgi ver
+                                send_message(davet_eden_id, f"🎉 **Tebrikler!** Linkiniz üzerinden yeni biri katıldı.\n🔥 Toplam davet sayınız: **{ref_sayisi}**")
+
+                    if chat_id not in kullanici_verileri:
+                        kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name}
+
+                    # 2. Zorunlu Kanal Kontrolü
+                    if not kanallari_kontrol_et(chat_id):
+                        sub_keyboard = {
+                            "inline_keyboard": [
+                                [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
+                                [{"text": "📢 iOS IPA Dosyaları Katıl", "url": "https://t.me/iosipadosyalari"}],
+                                [{"text": "📢 iOS E-Sign TR Katıl", "url": "https://t.me/iOSEsignTR"}],
+                                [{"text": "✅ Katıldım, Kontrol Et", "callback_data": "kontrol_et"}]
+                            ]
+                        }
+                        send_message(chat_id, "⚠️ **Botu kullanabilmek için aşağıdaki kanallarımıza abone olmanız gerekmektedir:**\n\nLütfen sırasıyla kanallara katıldıktan sonra aşağıdaki **'✅ Katıldım, Kontrol Et'** butonuna tıklayın.", sub_keyboard)
+                        continue
+
+                    # Kanallardaysa ve ilk kez tam giriş yapıyorsa admin'e bildirim at
                     if ADMIN_ID != 0 and chat_id != ADMIN_ID:
-                        send_message(ADMIN_ID, f"🔔 **Yeni Kullanıcı Botu Başlattı!**\n\n👤 İsim: {first_name}\nkünyesi: @{username}\n🆔 ID: `{chat_id}`")
+                        davet_bilgi = f"\n🔗 Davet Eden ID: `{davet_eden_id}`" if davet_eden_id else ""
+                        send_message(ADMIN_ID, f"🔔 **Yeni Kullanıcı Botu Başlattı ve Kanallara Katıldı!**\n\n👤 İsim: {first_name}\nkünyesi: @{username}\n🆔 ID: `{chat_id}`{davet_bilgi}")
+
                     send_message(chat_id, f"✨ Merhaba **{first_name}**!\n\n👑 **Apple Developer VIP Ekosistemine** hoş geldin.\n\n🚀 Cihazını özgürleştirmek için aşağıdaki modern menüyü kullanabilir veya **AI Asistan** ile merak ettiklerini anında sorabilirsin:", main_menu)
                     
                 elif user_states.get(chat_id) == "waiting_udid":
@@ -125,6 +195,7 @@ if check_bot():
                         send_message(chat_id, f"✅ **UDID Başarıyla Alındı!**\n`{udid}`\n\n🔥 İşlemi sonuçlandırmak için bu kodla birlikte yöneticimize yaz:\n👉 **@devolepercertificate**", back_keyboard)
                 
                 else:
+                    # AI Chat / Soru Yanıtlama
                     q = text.lower()
                     if any(w in q for w in ["fiyat", "ne kadar", "ücret", "kaç tl"]):
                         reply = "💰 **Fiyat:** 1 Yıllık Tam Yetkili VIP Sertifika yalnızca **250₺**'dir.\n🛒 Satın alım: @devolepercertificate"
@@ -143,8 +214,28 @@ if check_bot():
                 chat_id = query["message"]["chat"]["id"]
                 message_id = query["message"]["message_id"]
                 data = query["data"]
+                first_name = query["from"].get("first_name", "Kullanıcı")
+                username = query["from"].get("username", "Yok")
                 
-                if data == "main_menu":
+                if data == "kontrol_et":
+                    if kanallari_kontrol_et(chat_id):
+                        delete_message(chat_id, message_id)
+                        send_message(chat_id, "🎉 Tebrikler, kanallara katılımınız onaylandı!")
+                        
+                        # Admin'e kanalları geçtiğine dair bildirim
+                        if ADMIN_ID != 0 and chat_id != ADMIN_ID:
+                            send_message(ADMIN_ID, f"🚨 **Kullanıcı Kanalları Tamamladı ve Giriş Yaptı!**\n\n👤 İsim: {first_name}\nkünyesi: @{username}\n🆔 ID: `{chat_id}`")
+                        
+                        send_message(chat_id, f"✨ Merhaba **{first_name}**!\n\n👑 **Apple Developer VIP Ekosistemine** hoş geldin. Menüyü kullanmaya başlayabilirsin:", main_menu)
+                    else:
+                        # Uyarı bildirimi (Alert)
+                        answer_data = {"callback_query_id": query["id"], "text": "❌ Henüz tüm kanallara katılmadınız! Lütfen kontrol edip tekrar deneyin.", "show_alert": True}
+                        req = urllib.request.Request(f"{BASE_URL}/answerCallbackQuery", data=urllib.parse.urlencode(answer_data).encode("utf-8"), method="POST")
+                        try:
+                            with urllib.request.urlopen(req): pass
+                        except: pass
+
+                elif data == "main_menu":
                     user_states.pop(chat_id, None)
                     edit_message(chat_id, message_id, "✨ **VIP Ana Kontrol Paneli:**\nLütfen yapmak istediğiniz işlemi seçin:", main_menu)
                 elif data == "ai_menu":
@@ -162,6 +253,17 @@ if check_bot():
                 elif data == "send_udid_info":
                     user_states[chat_id] = "waiting_udid"
                     edit_message(chat_id, message_id, "⚡️ **UDID Gönderim Ekranı**\n\nSafari'den **`get.ud.me`** adresine girip UDID'ni kopyala ve **doğrudan bu sohbete mesaj olarak yaz!**", back_keyboard)
+                elif data == "davet_menu":
+                    bot_info_req = urllib.request.Request(f"{BASE_URL}/getMe")
+                    try:
+                        with urllib.request.urlopen(bot_info_req) as resp:
+                            bot_username = json.loads(resp.read().decode())["result"]["username"]
+                    except:
+                        bot_username = "bot"
+                    
+                    ref_link = f"https://t.me/{bot_username}?start={chat_id}"
+                    ref_sayisi = kullanici_verileri.get(chat_id, {"referrals": 0})["referrals"]
+                    edit_message(chat_id, message_id, f"📌 **Davet Et - Kazan Sistemi:**\n\nArkadaşlarınızı davet ederek ödüller kazanabilirsiniz!\n\n🔗 **Kişisel Davet Linkiniz:**\n`{ref_link}`\n\n📊 Toplam Davet Ettiğiniz Kişi: **{ref_sayisi}**", back_keyboard)
                 elif data == "benefits":
                     edit_message(chat_id, message_id, "🛡 **Avantajlar:**\n• Bilgisayarsız IPA kurulumu\n• Sınırsız uygulama\n• Esign, Scarlet ve GBox uyumu", back_keyboard)
                 elif data == "tools":
@@ -171,4 +273,4 @@ if check_bot():
 
         time.sleep(1)
 else:
-    print("⚠️ Bot başlatılamadı.")
+    print("⚠️ Botu başlatılamadı.")
