@@ -21,7 +21,7 @@ threading.Thread(target=run_server, daemon=True).start()
 # -------------------------------------------------------------
 
 TOKEN = "8989644682:AAGBeZGT-XZgTaYMXYEoMr2me8sNIjoGzzE".strip()
-ADMIN_ID = 8578298882  # Senin ID'n
+ADMIN_ID = 8578298828  # Senin ID'n
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
 # Zorunlu Kanallar Listesi (Kanal kullanıcı adları - Bot bu kanallarda yönetici olmalı)
@@ -130,6 +130,10 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 VIP Ekosistem Botu Aktif ve Çalışıyor...")
+    
+    # 🔔 Bot açıldığı anda Admin'e Telegram üzerinden bildirim gönderir:
+    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu başarıyla aktif hale geldi ve bot döngüsü çalışmaya başladı.")
+    
     offset = None
     user_states = {}
 
