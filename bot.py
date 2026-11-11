@@ -30,7 +30,7 @@ BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 # Zorunlu Kanallar Listesi
 ZORUNLU_KANALLAR = ["iosipadosyalari", "iOSEsignTR"] 
 
-# Bellek tabanlı veritabanı
+# Bellek tabanlı veritabanı (Kullanıcılar ve davetler için)
 kullanici_verileri = {}
 
 def check_bot():
@@ -141,7 +141,7 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 VIP Ekosistem Botu Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu aktif, port ayarları güncellendi ve bot çalışmaya başladı.")
+    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu aktif, port ayarları güncellendi ve yeni kullanıcı takip sistemi devrede.")
     
     offset = None
 
@@ -154,16 +154,35 @@ if check_bot():
                 msg = update["message"]
                 chat_id = msg["chat"]["id"]
                 text = msg.get("text", "")
-                first_name = msg["chat"].get("first_name", "Değerli Müşterimiz")
-                username = msg["chat"].get("username", "Yok")
+                first_name = msg["chat"].get("first_name", "İsimsiz")
+                username = msg["chat"].get("username", "Kullanıcı adı yok")
                 
                 if text.startswith("/start"):
                     args = text.split()
                     
+                    # 1. Yeni Kullanıcı Kontrolü ve Admin'e Bildirim Gönderme
+                    if chat_id not in kullanici_verileri and chat_id != ADMIN_ID:
+                        kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name}
+                        toplam_kullanici = len(kullanici_verileri)
+                        
+                        # Admin'e özel bildirim mesajı
+                        admin_mesaji = (
+                            f"👤 **Yeni Kullanıcı Katıldı!**\n\n"
+                            f"📌 Sıra: **{toplam_kullanici}. Kullanıcı**\n"
+                            f"İsim: {first_name}\n"
+                            f"Kullanıcı Adı: @{username}\n"
+                            f"ID: `{chat_id}`"
+                        )
+                        send_message(ADMIN_ID, admin_mesaji)
+
+                    elif chat_id not in kullanici_verileri:
+                        kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name}
+
+                    # 2. Davet (Referral) Kontrolü
                     davet_eden_id = None
                     if len(args) > 1 and args[1].isdigit():
                         davet_eden_id = int(args[1])
-                        if davet_eden_id != chat_id and chat_id not in kullanici_verileri:
+                        if davet_eden_id != chat_id:
                             if davet_eden_id in kullanici_verileri:
                                 kullanici_verileri[davet_eden_id]["referrals"] += 1
                                 ref_sayisi = kullanici_verileri[davet_eden_id]["referrals"]
@@ -171,9 +190,7 @@ if check_bot():
                                 if ref_sayisi >= 10:
                                     send_message(ADMIN_ID, f"🏆 **ÖDÜL KAZANAN ÇIKTI!**\n\n👤 Kullanıcı: {first_name} (@{username})\n🆔 ID: `{davet_eden_id}`\n🔥 10 arkadaşını davet etti ve ücretsiz sertifika hakkı kazandı!")
 
-                    if chat_id not in kullanici_verileri:
-                        kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name}
-
+                    # 3. Zorunlu Kanal Kontrolü
                     if not kanallari_kontrol_et(chat_id):
                         sub_keyboard = {
                             "inline_keyboard": [
@@ -204,35 +221,4 @@ if check_bot():
                 elif data == "udid_nasil_bakilir":
                     edit_message(chat_id, message_id, "📱 **UDID Nereden Bakılır?**\n\nSafari tarayıcından UDID öğrenme sitelerine girerek veya iTunes / Finder aracılığıyla iPhone UDID numaranı (40 haneli) kolayca öğrenebilirsin.", back_keyboard)
                 
-                elif data == "davet_menu":
-                    ref_link = f"https://t.me/iOSEsingTR_bot?start={chat_id}"
-                    davet_sayisi = kullanici_verileri.get(chat_id, {}).get("referrals", 0)
-                    edit_message(chat_id, message_id, f"🎁 **10 Davet Et, Ücretsiz Sertifika Al!**\n\nArkadaşlarını davet et, 10 kişiye ulaştığında VIP Sertifikan bizden hediye!\n\n🔗 **Senin Davet Linkin:**\n`{ref_link}`\n\n🔥 **Mevcut Davetlerin:** {davet_sayisi} / 10", back_keyboard)
-                
-                elif data == "ai_menu":
-                    edit_message(chat_id, message_id, "🤖 **AI Asistan'a Hoş Geldin!**\n\nAşağıdaki hazır sorulardan birini seçerek anında bilgi alabilirsin:", ai_chat_keyboard)
-                
-                elif data == "tools":
-                    edit_message(chat_id, message_id, "🛠 **Araçlar & Uygulamalar:**\n\nSiedloading ve imzalama araçları (E-Sign, KSign, GBox, LCSign) hakkında güncel rehberler kanallarımızda paylaşılmaktadır.", back_keyboard)
-                
-                elif data == "benefits":
-                    edit_message(chat_id, message_id, "🛡 **VIP Avantajları:**\n\n• 1 Yıl Garantili Sertifika\n• Revoke durumunda ücretsiz değişim\n• Hızlı UDID aktivasyonu", back_keyboard)
-                
-                elif data == "faq":
-                    edit_message(chat_id, message_id, "❓ **Sık Sorulan Sorular (SSS):**\n\n1. **Sertifika ne kadar sürede aktif olur?** Ödeme sonrası kısa süre içinde UDID'iniz işleme alınır.\n2. **Garanti var mı?** Evet, süre boyunca destek sağlanır.", back_keyboard)
-                
-                elif data == "check_subscription":
-                    if kanallari_kontrol_et(chat_id):
-                        delete_message(chat_id, message_id)
-                        send_message(chat_id, "✨ **Harika! Kanallara katılımınız onaylandı.**\n\n👑 Apple Developer VIP Ekosistemine hoş geldin.", main_menu)
-                    else:
-                        send_message(chat_id, "⚠️ Henüz tüm kanallara abone olmamış görünüyorsun. Lütfen kontrol edip tekrar dene.")
-                
-                elif data in ["ai_fiyat", "ai_udid", "ai_guven", "ai_sure"]:
-                    cevaplar = {
-                        "ai_fiyat": "💰 VIP Sertifika fiyatımız Shopier mağazamızda güncel olarak sunulmaktadır. Detaylar için 'Vip Sertifika Al' butonuna tıklayabilirsin.",
-                        "ai_udid": "📱 UDID, Apple cihazınıza ait özel 40 haneli bir kimlik numarasıdır. Safari üzerinden kolayca öğrenebilirsin.",
-                        "ai_guven": "🛡 Sistemimiz tamamen güvenlidir ve binlerce mutlu müşterimiz bulunmaktadır. Canlı destekten referanslarımızı inceleyebilirsin.",
-                        "ai_sure": "⏳ İşlemler genellikle ödeme onayından sonra çok kısa süre içinde tamamlanır."
-                    }
-                    edit_message(chat_id, message_id, cevaplar[data], ai_chat_keyboard)
+                elif
