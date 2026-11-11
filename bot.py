@@ -121,7 +121,6 @@ def check_bot():
         print("❌ Bağlantı Hatası:", e)
         return False
 
-# Gelişmiş, Ultra Prestijli Ana Menü
 main_menu = {
     "inline_keyboard": [
         [{"text": "💎 VIP Sertifika Satın Al", "url": "https://www.shopier.com/iOSEsingTR"}, {"text": "⚡️ UDID Kaydı Gönder", "callback_data": "send_udid_info"}],
@@ -301,7 +300,6 @@ if check_bot():
                     edit_message(chat_id, message_id, profil_metni, main_back_keyboard)
 
                 elif data == "vip_leaderboard":
-                    # En çok davet yapan ilk 3 kişiyi sıralayalım
                     sirali_kullanicilar = sorted(kullanici_verileri.items(), key=lambda x: x[1].get("referrals", 0), reverse=True)[:3]
                     lb_metni = "🏆 **Ultra VIP Liderlik Tablosu**\n\nEn çok arkadaşını davet eden prestijli üyelerimiz:\n\n"
                     if not sirali_kullanicilar or sirali_kullanicilar[0][1].get("referrals", 0) == 0:
