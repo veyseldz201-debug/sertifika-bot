@@ -140,7 +140,7 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 VIP Ekosistem Botu Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu aktif, zorunlu kanallar güncellendi.")
+    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu aktif, davet linkleri güncellendi.")
     
     offset = None
 
@@ -218,7 +218,7 @@ if check_bot():
                     edit_message(chat_id, message_id, "📱 **UDID Nereden Bakılır?**\n\nSafari tarayıcından UDID öğrenme sitelerine girerek veya iTunes / Finder aracılığıyla iPhone UDID numaranı (40 haneli) kolayca öğrenebilirsin.", back_keyboard)
                 
                 elif data == "davet_menu":
-                    ref_link = f"https://t.me/iOSEsingTR_bot?start={chat_id}"
+                    ref_link = f"https://t.me/SertifikaMagazaBot?start={chat_id}"
                     davet_sayisi = kullanici_verileri.get(chat_id, {}).get("referrals", 0)
                     edit_message(chat_id, message_id, f"🎁 **10 Davet Et, Ücretsiz Sertifika Al!**\n\nArkadaşlarını davet et, 10 kişiye ulaştığında VIP Sertifikan bizden hediye!\n\n🔗 **Senin Davet Linkin:**\n`{ref_link}`\n\n🔥 **Mevcut Davetlerin:** {davet_sayisi} / 10", back_keyboard)
                 
@@ -226,26 +226,4 @@ if check_bot():
                     edit_message(chat_id, message_id, "🤖 **AI Asistan'a Hoş Geldin!**\n\nAşağıdaki hazır sorulardan birini seçerek anında bilgi alabilirsin:", ai_chat_keyboard)
                 
                 elif data == "tools":
-                    edit_message(chat_id, message_id, "🛠 **Araçlar & Uygulamalar:**\n\nSiedloading ve imzalama araçları (E-Sign, KSign, GBox, LCSign) hakkında güncel rehberler kanallarımızda paylaşılmaktadır.", back_keyboard)
-                
-                elif data == "benefits":
-                    edit_message(chat_id, message_id, "🛡 **VIP Avantajları:**\n\n• 1 Yıl Garantili Sertifika\n• Revoke durumunda ücretsiz değişim\n• Hızlı UDID aktivasyonu", back_keyboard)
-                
-                elif data == "faq":
-                    edit_message(chat_id, message_id, "❓ **Sık Sorulan Sorular (SSS):**\n\n1. **Sertifika ne kadar sürede aktif olur?** Ödeme sonrası kısa süre içinde UDID'iniz işleme alınır.\n2. **Garanti var mı?** Evet, süre boyunca destek sağlanır.", back_keyboard)
-                
-                elif data == "check_subscription":
-                    if kanallari_kontrol_et(chat_id):
-                        delete_message(chat_id, message_id)
-                        send_message(chat_id, "✨ **Harika! Kanallara katılımınız onaylandı.**\n\n👑 Apple Developer VIP Ekosistemine hoş geldin.", main_menu)
-                    else:
-                        send_message(chat_id, "⚠️ Henüz tüm kanallara abone olmamış görünüyorsun. Lütfen kontrol edip tekrar dene.")
-                
-                elif data in ["ai_fiyat", "ai_udid", "ai_guven", "ai_sure"]:
-                    cevaplar = {
-                        "ai_fiyat": "💰 VIP Sertifika fiyatımız Shopier mağazamızda güncel olarak sunulmaktadır. Detaylar için 'Vip Sertifika Al' butonuna tıklayabilirsin.",
-                        "ai_udid": "📱 UDID, Apple cihazınıza ait özel 40 haneli bir kimlik numarasıdır. Safari üzerinden kolayca öğrenebilirsin.",
-                        "ai_guven": "🛡 Sistemimiz tamamen güvenlidir ve binlerce mutlu müşterimiz bulunmaktadır. Canlı destekten referanslarımızı inceleyebilirsin.",
-                        "ai_sure": "⏳ İşlemler genellikle ödeme onayından sonra çok kısa süre içinde tamamlanır."
-                    }
-                    edit_message(chat_id, message_id, cevaplar[data], ai_chat_keyboard)
+                    edit_message(chat_id, message_id, "🛠 **Araçlar & Uygulamalar:**\n\nSiedloading ve imzalama araçları (E-Sign, KSign, GBox, LCSign) hakkında güncel reh
