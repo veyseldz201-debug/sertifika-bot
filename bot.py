@@ -153,10 +153,7 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 Bot Aktif ve Çalışıyor...")
-    
-    # Bot güncellenip açıldığında kullanıcılara otomatik bildirim gönderelim
-    time.sleep(2)
-    send_message(ADMIN_ID, "🚀 **Bot Güncellendi ve Yeniden Başlatıldı!**\n\nKullanıcılara güncelleme bildirimi gönderiliyor...")
+    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı ve Hazır!**\n\nSunucu portu açık, sistem sorunsuz çalışıyor.")
 
     offset = None
 
@@ -172,7 +169,6 @@ if check_bot():
                 first_name = msg["chat"].get("first_name", "İsimsiz")
                 username = msg["chat"].get("username", "Kullanıcı adı yok")
                 
-                # Admin Toplu Duyuru Komutu (/duyuru <mesaj>)
                 if text.startswith("/duyuru ") and chat_id == ADMIN_ID:
                     duyuru_metni = text[8:].strip()
                     gonderilen = 0
@@ -201,10 +197,6 @@ if check_bot():
                             f"ID: `{chat_id}`"
                         )
                         send_message(ADMIN_ID, admin_mesaji)
-                        
-                        # Yeni kullanıcıya botun güncellendiğini / yenilendiğini hissettiren hoş geldin bildirimi
-                        send_message(chat_id, "🚀 **Bot Güncellendi!**\n\nEn yeni özellikler ve altyapı iyileştirmeleri aktif edildi. Botu sorunsuz kullanabilmek için /start komutuna basabilirsin.")
-                        
                     elif chat_id not in kullanici_verileri:
                         kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
 
@@ -218,7 +210,6 @@ if check_bot():
                         send_message(ADMIN_ID, "👑 **Admin Olarak Botu Başlattın!**\n\nYönetim paneline erişmek için /admin yazabilirsin.", main_menu)
                         continue
 
-                    # Her start veya işlemde kanal kontrolü yapılır (Çıkanlar tekrar engellenir)
                     if not kanallari_kontrol_et(chat_id):
                         sub_keyboard = {
                             "inline_keyboard": [
@@ -245,7 +236,6 @@ if check_bot():
                 
                 answer_callback_query(cq_id)
                 
-                # ÖNEMLİ GÜVENLİK: Admin dışındaki herkes butonlara basarken de kanallarda mı diye kontrol edilir!
                 if chat_id != ADMIN_ID and not kanallari_kontrol_et(chat_id) and data != "check_subscription":
                     sub_keyboard = {
                         "inline_keyboard": [
@@ -307,4 +297,12 @@ if check_bot():
                         )
                     edit_message(chat_id, message_id, davet_metni, back_keyboard)
                 elif data == "ai_menu":
-                    edit_message(chat_id, message_id, "🤖 **AI Asistan'a Hoş Geldin!**\n\
+                    edit_message(chat_id, message_id, "🤖 **AI Asistan'a Hoş Geldin!**\n\nAşağıdaki hazır sorulardan birini seçerek anında bilgi alabilirsin:", ai_chat_keyboard)
+                elif data == "tools":
+                    edit_message(chat_id, message_id, "🛠 **Araçlar & Uygulamalar:**\n\nSiedloading ve imzalama araçları hakkında bilgi alabilirsin.", back_keyboard)
+                elif data == "benefits":
+                    edit_message(chat_id, message_id, "🛡 **VIP Avantajları:**\n\n• 1 Yıl Garantili Sertifika\n• Revoke durumunda ücretsiz değişim", back_keyboard)
+                elif data == "faq":
+                    edit_message(chat_id, message_id, "❓ **Sık Sorulan Sorular (SSS):**\n\nSertifikanız ödeme sonrası kısa sürede aktif edilir.", back_keyboard)
+                elif data == "check_subscription":
+                    if kanallari_kontrol_et(chat_id):
