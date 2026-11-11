@@ -24,25 +24,7 @@ ADMIN_ID = 8578298828
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
 ZORUNLU_KANALLAR = ["ipaonay", "iosipadosyalari", "iOSEsignTR"]
-VERI_DOSYASI = "kullanicilar.json"
-
-def verileri_yukle():
-    if os.path.exists(VERI_DOSYASI):
-        try:
-            with open(VERI_DOSYASI, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except:
-            return {}
-    return {}
-
-def verileri_kaydet():
-    try:
-        with open(VERI_DOSYASI, "w", encoding="utf-8") as f:
-            json.dump(kullanici_verileri, f, ensure_ascii=False, indent=4)
-    except Exception as e:
-        print("Veri kayıt hatası:", e)
-
-kullanici_verileri = {int(k): v for k, v in verileri_yukle().items()}
+kullanici_verileri = {}
 
 def send_message(chat_id, text, reply_markup=None):
     data = {"chat_id": chat_id, "text": text, "parse_mode": "Markdown"}
@@ -119,7 +101,6 @@ def daveti_onayla_ve_ver(chat_id, first_name, username):
             if davet_eden in kullanici_verileri:
                 kullanici_verileri[chat_id]["davet_onaylandi"] = True
                 kullanici_verileri[davet_eden]["referrals"] += 1
-                verileri_kaydet()
                 ref_sayisi = kullanici_verileri[davet_eden]["referrals"]
                 
                 send_message(davet_eden, f"💎 **DAVET SİSTEMİ**\n\n🎉 Davet ettiğin kullanıcı resmi kanallara katıldı ve doğrulandı!\n➕ **Hesabına +1 Puan Eklendi.**\n🔥 Toplam İlerlemen: **{ref_sayisi} / 15**")
@@ -140,10 +121,9 @@ def check_bot():
         print("❌ Bağlantı Hatası:", e)
         return False
 
-# İstendiği Gibi VIP İbareleri Kaldırılmış Tertemiz Ana Menü
 main_menu = {
     "inline_keyboard": [
-        [{"text": "💎 VIP Sertifika Satın Al", "url": "https://www.shopier.com/iOSEsignTR"}, {"text": "⚡️ UDID Kaydı Gönder", "callback_data": "send_udid_info"}],
+        [{"text": "💎 VIP Sertifika Satın Al", "url": "https://www.shopier.com/iOSEsingTR"}, {"text": "⚡️ UDID Kaydı Gönder", "callback_data": "send_udid_info"}],
         [{"text": "⭐ Profilim & Kartım", "callback_data": "vip_profile"}, {"text": "🏆 Liderlik Tablosu", "callback_data": "vip_leaderboard"}],
         [{"text": "🎁 15 Davet Et, Ücretsiz Al!", "callback_data": "davet_menu"}, {"text": "🤖 AI Asistan", "callback_data": "ai_menu"}],
         [{"text": "🛠 İmza Araçları & IPA", "url": "https://t.me/iosipadosyalari"}, {"text": "🛡 Avantajlar & Garanti", "callback_data": "benefits"}],
@@ -151,7 +131,6 @@ main_menu = {
     ]
 }
 
-# Daha Çok İşlevsel Özellik İçeren Gelişmiş Admin Paneli
 admin_menu = {
     "inline_keyboard": [
         [{"text": "📊 Bot İstatistikleri", "callback_data": "admin_stats"}, {"text": "📢 Toplu Duyuru", "callback_data": "admin_broadcast_prompt"}],
@@ -178,8 +157,8 @@ ai_chat_keyboard = {
 }
 
 if check_bot():
-    print("🚀 Bot Aktif ve Çalışıyor (Kalıcı Hafıza Aktif)...")
-    send_message(ADMIN_ID, "🚀 **Sertifika Botu Başlatıldı!**\n\nKalıcı hafıza (`kullanicilar.json`) aktif, veriler sıfırlanmayacak.")
+    print("🚀 Bot Aktif ve Çalışıyor...")
+    send_message(ADMIN_ID, "🚀 **Sertifika Botu Başlatıldı!**\n\nSistem kararlı bir şekilde çalışmaya hazır.")
 
     offset = None
 
@@ -215,7 +194,6 @@ if check_bot():
                         
                         if chat_id not in kullanici_verileri and chat_id != ADMIN_ID:
                             kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
-                            verileri_kaydet()
                             toplam_kullanici = len(kullanici_verileri)
                             admin_mesaji = (
                                 f"👤 **Yeni Kullanıcı Katıldı!**\n\n"
@@ -227,14 +205,12 @@ if check_bot():
                             send_message(ADMIN_ID, admin_mesaji)
                         elif chat_id not in kullanici_verileri:
                             kullanici_verileri[chat_id] = {"referrals": 0, "username": username, "first_name": first_name, "davet_eden": None, "davet_onaylandi": False}
-                            verileri_kaydet()
 
                         if len(args) > 1 and args[1].isdigit():
                             davet_eden_id = int(args[1])
                             if davet_eden_id != chat_id and davet_eden_id in kullanici_verileri:
                                 if not kullanici_verileri[chat_id].get("davet_eden"):
                                     kullanici_verileri[chat_id]["davet_eden"] = davet_eden_id
-                                    verileri_kaydet()
 
                         if chat_id == ADMIN_ID:
                             send_message(ADMIN_ID, "👑 **Admin Olarak Oturum Açıldı!**\n\nPaneli açmak için /admin komutunu gönderebilirsin.", main_menu)
@@ -293,7 +269,7 @@ if check_bot():
                     istatistik_metni = (
                         f"📊 **İstatistik ve Durum Paneli**\n\n"
                         f"👥 Toplam Tekil Kullanıcı: **{toplam_kullanici}**\n"
-                        f"🛡 Hafıza Durumu: **Kalıcı (JSON) Aktif**\n"
+                        f"🛡 Sistem Durumu: **Kararlı / Aktif**\n"
                     )
                     edit_message(chat_id, message_id, istatistik_metni, back_keyboard)
 
@@ -321,16 +297,15 @@ if check_bot():
                 elif data == "admin_reset_confirm" and chat_id == ADMIN_ID:
                     reset_kb = {
                         "inline_keyboard": [
-                            [{"text": "⚠️ EVET, TÜM VERİLERİ SİL", "callback_data": "admin_reset_exec"}],
+                            [{"text": "⚠️ EVET, VERİLERİ SIFIRLA", "callback_data": "admin_reset_exec"}],
                             [{"text": "🔙 Vazgeç / Geri Dön", "callback_data": "admin_panel_back"}]
                         ]
                     }
-                    edit_message(chat_id, message_id, "⚠️ **DİKKAT:** Veritabanındaki tüm kullanıcı kayıtları ve davetler kalıcı olarak silinecek. Emin misiniz?", reset_kb)
+                    edit_message(chat_id, message_id, "⚠️ **DİKKAT:** Bellekteki tüm kullanıcı kayıtları sıfırlanacak. Emin misiniz?", reset_kb)
 
                 elif data == "admin_reset_exec" and chat_id == ADMIN_ID:
                     kullanici_verileri.clear()
-                    verileri_kaydet()
-                    edit_message(chat_id, message_id, "🧹 **Veritabanı Sıfırlandı!** Tüm kullanıcı verileri temizlendi.", back_keyboard)
+                    edit_message(chat_id, message_id, "🧹 **Bellek Sıfırlandı!** Tüm kullanıcı verileri temizlendi.", back_keyboard)
 
                 elif data == "vip_profile":
                     davet_sayisi = kullanici_verileri.get(chat_id, {}).get("referrals", 0)
