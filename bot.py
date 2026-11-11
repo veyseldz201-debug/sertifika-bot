@@ -28,7 +28,6 @@ BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 ZORUNLU_KANALLAR = ["iosipadosyalari", "iOSEsignTR"] 
 
 # Bellek tabanlı veritabanı (Davet ve kayıtlar için)
-# {user_id: {"referrals": 0, "username": "...", "first_name": "...", "claimed": False}}
 kullanici_verileri = {}
 
 def check_bot():
@@ -174,4 +173,10 @@ if check_bot():
                         sub_keyboard = {
                             "inline_keyboard": [
                                 [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
-                                [{"text": "📢 iOS IPA Dosyaları Katıl", "url
+                                [{"text": "📢 iOS IPA Dosyaları Katıl", "url": "https://t.me/iosipadosyalari"}],
+                                [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
+                            ]
+                        }
+                        send_message(chat_id, "⚠️ Botu kullanabilmek için yukarıdaki kanallarımıza abone olmanız gerekmektedir.", sub_keyboard)
+                    else:
+                        send_message(chat_id, "✨ **Merhaba !**\n\n👑 Apple Developer VIP Ekosistemine hoş geldin.\n\n🚀 Cihazını özgürleştirmek için aşağıdaki modern menüyü kullanabilir veya AI Asistan ile merak ettiklerini anında sorabilirsin:", main_menu)
