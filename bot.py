@@ -26,8 +26,8 @@ TOKEN = "8989644682:AAGBeZGT-XZgTaYMXYEoMr2me8sNIjoGzzE".strip()
 ADMIN_ID = 8578298828  # Senin ID'n
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
-# Zorunlu Kanallar Listesi
-ZORUNLU_KANALLAR = ["iosipadosyalari", "iOSEsignTR"] 
+# Zorunlu Kanallar Listesi (Bot bu kanallarda YÖNETİCİ olmalıdır)
+ZORUNLU_KANALLAR = ["ipaonay", "iosipadosyalari", "iOSEsignTR"] 
 
 # Bellek tabanlı veritabanı (Kullanıcılar ve davetler için)
 kullanici_verileri = {}
@@ -105,7 +105,7 @@ def kanallari_kontrol_et(user_id):
                 res = json.loads(response.read().decode())
                 if res.get("ok"):
                     status = res["result"].get("status")
-                    if status in ["left", "kicked"]:
+                    if status not in ["member", "administrator", "creator"]:
                         return False
                 else:
                     return False
@@ -140,7 +140,7 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 VIP Ekosistem Botu Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu aktif, port ayarları güncellendi ve yeni kullanıcı takip sistemi devrede.")
+    send_message(ADMIN_ID, "🚀 **Bot Başlatıldı!**\n\nSunucu aktif, zorunlu kanallar güncellendi.")
     
     offset = None
 
@@ -189,8 +189,9 @@ if check_bot():
                     if not kanallari_kontrol_et(chat_id):
                         sub_keyboard = {
                             "inline_keyboard": [
-                                [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
-                                [{"text": "📢 iOS IPA Dosyaları Katıl", "url": "https://t.me/iosipadosyalari"}],
+                                [{"text": "📢 IPA Onay Kanalı", "url": "https://t.me/ipaonay"}],
+                                [{"text": "📢 iOS IPA Dosyaları", "url": "https://t.me/iosipadosyalari"}],
+                                [{"text": "📢 iOSEsignTR Kanalı", "url": "https://t.me/iOSEsignTR"}],
                                 [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
                             ]
                         }
