@@ -19,7 +19,8 @@ def run_server():
 
 threading.Thread(target=run_server, daemon=True).start()
 
-TOKEN = "8989644682:AAECA4iBsw-Gy6sCsKbOPjzK3SRmN19IL_A".strip()
+# Token gizli olarak Render Environment Variables içerisinden alınır (GitHub uyarısı almazsın)
+TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 ADMIN_ID = 8578298828
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
@@ -45,6 +46,8 @@ def verileri_kaydet():
 kullanici_verileri = {int(k): v for k, v in verileri_yukle().items()}
 
 def send_message(chat_id, text, reply_markup=None):
+    if not TOKEN:
+        return
     data = {"chat_id": chat_id, "text": text, "parse_mode": "Markdown"}
     if reply_markup:
         data["reply_markup"] = json.dumps(reply_markup)
@@ -56,6 +59,8 @@ def send_message(chat_id, text, reply_markup=None):
         print("Mesaj hatası:", e)
 
 def edit_message(chat_id, message_id, text, reply_markup=None):
+    if not TOKEN:
+        return
     data = {"chat_id": chat_id, "message_id": message_id, "text": text, "parse_mode": "Markdown"}
     if reply_markup:
         data["reply_markup"] = json.dumps(reply_markup)
@@ -67,6 +72,8 @@ def edit_message(chat_id, message_id, text, reply_markup=None):
         print("Düzenleme hatası:", e)
 
 def delete_message(chat_id, message_id):
+    if not TOKEN:
+        return
     data = {"chat_id": chat_id, "message_id": message_id}
     req = urllib.request.Request(f"{BASE_URL}/deleteMessage", data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
     try:
@@ -76,6 +83,8 @@ def delete_message(chat_id, message_id):
         pass
 
 def answer_callback_query(callback_query_id, text=""):
+    if not TOKEN:
+        return
     data = {"callback_query_id": callback_query_id, "text": text, "show_alert": False}
     req = urllib.request.Request(f"{BASE_URL}/answerCallbackQuery", data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
     try:
@@ -85,6 +94,9 @@ def answer_callback_query(callback_query_id, text=""):
         pass
 
 def get_updates(offset=None):
+    if not TOKEN:
+        time.sleep(3)
+        return []
     url = f"{BASE_URL}/getUpdates?timeout=30"
     if offset:
         url += f"&offset={offset}"
@@ -128,6 +140,9 @@ def daveti_onayla_ve_ver(chat_id, first_name, username):
                     send_message(ADMIN_ID, f"🏆 **KRİTİK BAŞARI: 15 DAVET TAMAMLANDI!**\n\n👤 Kullanıcı: {first_name} (@{username})\n🆔 ID: `{davet_eden}`\n🔥 Ücretsiz Sertifika hakkını kazandı!")
 
 def check_bot():
+    if not TOKEN:
+        print("❌ HATA: BOT_TOKEN çevre değişkeni (Environment Variable) tanımlanmamış!")
+        return False
     try:
         req = urllib.request.Request(f"{BASE_URL}/getMe")
         with urllib.request.urlopen(req, timeout=10) as response:
@@ -177,7 +192,7 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 Bot Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Sertifika Botu Başlatıldı!**\n\nYeni token ve güncel menüler aktif.")
+    send_message(ADMIN_ID, "🚀 **Sertifika Botu Başlatıldı!**\n\nGüvenli token mimarisi ve tüm özellikler aktif.")
 
     offset = None
 
