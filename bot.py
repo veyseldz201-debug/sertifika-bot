@@ -19,7 +19,7 @@ def run_server():
 
 threading.Thread(target=run_server, daemon=True).start()
 
-TOKEN = "8989644682:AAGBeZGT-XZgTaYMXYEoMr2me8sNIjoGzzE".strip()
+TOKEN = "8989644682:AAECA4iBsw-Gy6sCsKbOPjzK3SRmN19IL_A".strip()
 ADMIN_ID = 8578298828
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
@@ -177,7 +177,7 @@ ai_chat_keyboard = {
 
 if check_bot():
     print("🚀 Bot Aktif ve Çalışıyor...")
-    send_message(ADMIN_ID, "🚀 **Sertifika Botu Başlatıldı!**\n\nKalıcı hafıza ve güncellenmiş menüler aktif.")
+    send_message(ADMIN_ID, "🚀 **Sertifika Botu Başlatıldı!**\n\nYeni token ve güncel menüler aktif.")
 
     offset = None
 
