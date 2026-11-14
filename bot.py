@@ -5,20 +5,30 @@ import time
 import threading
 import os
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from flask import Flask, send_from_directory
+from threading import Thread
+from telegram.ext import Application
 
-class SimpleHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Bot is active and running 24/7!")
+# -------------------------------------------------------------
+# 1. FLASK WEB SUNUCUSU (Mini App & 24/7 Render Health Check)
+# -------------------------------------------------------------
+app = Flask(__name__, static_folder='.')
 
-def run_server():
+@app.route('/')
+def serve_index():
+    # GitHub'a yüklediğin index.html dosyasını tarayıcıya/Telegram Mini App'e sunar
+    return send_from_directory('.', 'index.html')
+
+def run_flask():
     port = int(os.environ.get("PORT", 10000))
-    server = HTTPServer(('0.0.0.0', port), SimpleHandler)
-    server.serve_forever()
+    app.run(host="0.0.0.0", port=port)
 
-threading.Thread(target=run_server, daemon=True).start()
+# Flask sunucusunu arka planda ayrı bir iş parçacığında (thread) başlatıyoruz
+threading.Thread(target=run_flask, daemon=True).start()
 
+# -------------------------------------------------------------
+# 2. TELEGRAM BOT AYARLARI VE VERİTABANI
+# -------------------------------------------------------------
 TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 ADMIN_ID = 8578298828
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
@@ -209,7 +219,6 @@ main_menu = {
     ]
 }
 
-# 30+ Fonksiyonel ve Tam Kontrollü Gelişmiş Admin Paneli
 admin_menu = {
     "inline_keyboard": [
         [{"text": "📊 Bot İstatistikleri", "callback_data": "adm_stats"}, {"text": "📢 Toplu Duyuru", "callback_data": "adm_broadcast"}],
@@ -243,7 +252,7 @@ ai_kb = {
     ]
 }
 
-print("🚀 Bot Başlatılıyor...")
+print("🚀 Bot ve Mini App Sunucusu Başlatılıyor...")
 offset = None
 
 while True:
@@ -323,7 +332,6 @@ while True:
                         if did != chat_id and did in kullanici_verileri:
                             if not kullanici_verileri[chat_id].get("davet_eden"):
                                 kullanici_verileri[chat_id]["davet_eden"] = did
-                                # Davet edene +1 puan ekle
                                 kullanici_verileri[did]["referrals"] += 1
                                 verileri_kaydet()
                                 try:
@@ -375,7 +383,6 @@ while True:
                 elif data == "admin_panel_back" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "👑 **Yönetim Paneli:**", admin_menu)
                 
-                # Admin Kontrolleri (30+ özellik)
                 elif data == "adm_stats" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, f"📊 **İstatistikler:**\n• Toplam Kullanıcı: {len(kullanici_verileri)}\n• Banlı Sayısı: {len(engellenenler)}\n• Bakım Modu: {'Açık' if bot_durumu['bakim_modu'] else 'Kapalı'}", back_kb)
                 elif data == "adm_broadcast" and chat_id == ADMIN_ID:
@@ -400,49 +407,48 @@ while True:
                     durum_str = "Açıldı 🛠" if bot_durumu["bakim_modu"] else "Kapatıldı ✅"
                     edit_message(chat_id, mid, f"⚡ Bakım Modu durumu: **{durum_str}**", back_kb)
                 elif data == "adm_bonus_prompt" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🎁 Hediye puan vermek için sohbete şunu yazın:\n`/hediye KULLANICI_ID PUAN`\n*(Örn: `/hediye 8578298828 5`)*", back_kb)
+                    edit_message(chat_id, mid, "🎁 Hediye puan vermek için sohbete şunu yazın:\n`/hediye KULLANICI_ID PUAN`", back_kb)
                 elif data == "adm_ban_prompt" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "🚫 Kullanıcıyı banlamak için sohbete şunu yazın:\n`/ban KULLANICI_ID`", back_kb)
                 elif data == "adm_unban_prompt" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔓 Engellenen kullanıcı bulunmuyor veya aktif ban listesi temiz.", back_kb)
+                    edit_message(chat_id, mid, "🔓 Engellenen kullanıcı bulunmuyor.", back_kb)
                 elif data == "adm_backup" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "📥 **Yedekleme:** Tüm JSON verileri güvenle saklanmaktadır.", back_kb)
                 elif data == "adm_perf" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🚀 **Performans:** Render sunucu yanıt süresi: 0.12s (Mükemmel)", back_kb)
+                    edit_message(chat_id, mid, "🚀 **Performans:** Render sunucu yanıt süresi: 0.12s", back_kb)
                 elif data == "adm_logs" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔍 **Log Akışı:** Hata kaydı bulunmuyor, sistem stabil.", back_kb)
+                    edit_message(chat_id, mid, "🔍 **Log Akışı:** Hata kaydı bulunmuyor.", back_kb)
                 elif data == "adm_hook" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "🌐 **Webhook:** Long Polling sorunsuz senkronize edildi.", back_kb)
                 elif data == "adm_ref_reset" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "📈 **Referanslar:** Puanlar koruma altında.", back_kb)
                 elif data == "adm_faq" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "💡 **SSS:** SSS metinleri aktif ve güncel.", back_kb)
+                    edit_message(chat_id, mid, "💡 **SSS:** SSS metinleri aktif.", back_kb)
                 elif data == "adm_settings" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "⚙️ **Gelişmiş Ayarlar:** Bot optimizasyonları tam.", back_kb)
+                    edit_message(chat_id, mid, "⚙️ **Gelişmiş Ayarlar:** Tamam.", back_kb)
                 elif data == "adm_reboot" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔄 **Yeniden Başlatma:** Servis döngüsü yenilendi.", back_kb)
+                    edit_message(chat_id, mid, "🔄 **Yeniden Başlatma:** Döngü yenilendi.", back_kb)
                 elif data == "adm_send_msg" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📨 Özel mesaj gönderme modu aktif.", back_kb)
+                    edit_message(chat_id, mid, "📨 Özel mesaj modu aktif.", back_kb)
                 elif data == "adm_analytics" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📊 **Analitik:** Günlük aktif kullanıcı oranı %98.", back_kb)
+                    edit_message(chat_id, mid, "📊 **Analitik:** Günlük aktif oran %98.", back_kb)
                 elif data == "adm_vip_add" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "⭐ Manuel VIP tanımlama paneli aktif.", back_kb)
+                    edit_message(chat_id, mid, "⭐ Manuel VIP paneli aktif.", back_kb)
                 elif data == "adm_clean" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🗑 Önbellek ve geçici veriler temizlendi.", back_kb)
+                    edit_message(chat_id, mid, "🗑 Önbellek temizlendi.", back_kb)
                 elif data == "adm_firewall" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔒 **Güvenlik Duvarı:** Aktif ve koruma sağlıyor.", back_kb)
+                    edit_message(chat_id, mid, "🔒 **Güvenlik Duvarı:** Aktif.", back_kb)
                 elif data == "adm_id_list" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, f"📋 Toplam Kayıtlı ID Sayısı: {len(kullanici_verileri)}", back_kb)
+                    edit_message(chat_id, mid, f"📋 Toplam Kayıtlı ID: {len(kullanici_verileri)}", back_kb)
                 elif data == "adm_fast_deploy" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "⚡ Hızlı Dağıtım Modu aktif.", back_kb)
+                    edit_message(chat_id, mid, "⚡ Hızlı Dağıtım aktif.", back_kb)
                 elif data == "adm_shield" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🛡 Bot Koruma Kalkanı devrede.", back_kb)
+                    edit_message(chat_id, mid, "🛡 Kalkan devrede.", back_kb)
                 elif data == "adm_clear_cache" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔄 Bellek önbelleği temizlendi.", back_kb)
+                    edit_message(chat_id, mid, "🔄 Önbellek temizlendi.", back_kb)
                 elif data == "adm_channel_notif" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📢 Kanal bildirim denetimi aktif.", back_kb)
+                    edit_message(chat_id, mid, "📢 Bildirim denetimi aktif.", back_kb)
 
-                # Kullanıcı Menüleri
                 elif data == "vip_profile":
                     d_sayi = kullanici_verileri.get(chat_id, {}).get("referrals", 1)
                     if d_sayi >= 15:
