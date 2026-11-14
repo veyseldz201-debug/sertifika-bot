@@ -4,30 +4,26 @@ import urllib.parse
 import time
 import threading
 import os
-from http.server import HTTPServer, BaseHTTPRequestHandler
 from flask import Flask, send_from_directory
-from threading import Thread
-from telegram.ext import Application
 
 # -------------------------------------------------------------
-# 1. FLASK WEB SUNUCUSU (Mini App & 24/7 Render Health Check)
+# 1. FLASK WEB SUNUCUSU (Mini App için index.html sunucu)
 # -------------------------------------------------------------
 app = Flask(__name__, static_folder='.')
 
 @app.route('/')
 def serve_index():
-    # GitHub'a yüklediğin index.html dosyasını tarayıcıya/Telegram Mini App'e sunar
     return send_from_directory('.', 'index.html')
 
 def run_flask():
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
 
-# Flask sunucusunu arka planda ayrı bir iş parçacığında (thread) başlatıyoruz
+# Flask'ı arka planda başlatıyoruz
 threading.Thread(target=run_flask, daemon=True).start()
 
 # -------------------------------------------------------------
-# 2. TELEGRAM BOT AYARLARI VE VERİTABANI
+# 2. TELEGRAM BOT AYARLARI VE LİSTE
 # -------------------------------------------------------------
 TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 ADMIN_ID = 8578298828
@@ -269,11 +265,11 @@ while True:
                 uname = msg["chat"].get("username", "Yok")
                 
                 if chat_id in engellenenler and chat_id != ADMIN_ID:
-                    send_message(chat_id, "🚫 Bu botu kullanmanız engellenmiştir.")
+                    send_message(chat_id, "🚫 Botu kullanmanız engellenmiştir.")
                     continue
 
                 if bot_durumu["bakim_modu"] and chat_id != ADMIN_ID:
-                    send_message(chat_id, "🛠 Bot şu anda bakım modundadır. Lütfen daha sonra tekrar deneyiniz.")
+                    send_message(chat_id, "🛠 Bot şu anda bakım modundadır.")
                     continue
 
                 if text.startswith("/duyuru ") and chat_id == ADMIN_ID:
@@ -295,7 +291,7 @@ while True:
                             kullanici_verileri[hid]["referrals"] += puan
                             verileri_kaydet()
                             send_message(ADMIN_ID, f"✅ Kullanıcıya ({hid}) {puan} puan eklendi.")
-                            send_message(hid, f"🎁 **Tebrikler!** Admin tarafından hesabınıza **{puan}** referans puanı eklendi!")
+                            send_message(hid, f"🎁 **Tebrikler!** Admin hesabınıza **{puan}** referans puanı ekledi!")
                         else:
                             send_message(ADMIN_ID, "⚠️ Bu ID'ye sahip kullanıcı bulunamadı.")
                     else:
@@ -307,16 +303,16 @@ while True:
                     if len(parts) == 2 and parts[1].isdigit():
                         bid = int(parts[1])
                         engellenenler.add(bid)
-                        send_message(ADMIN_ID, f"🚫 Kullanıcı ({bid}) başarıyla banlandı.")
+                        send_message(ADMIN_ID, f"🚫 Kullanıcı ({bid}) banlandı.")
                     continue
 
                 if text.startswith("/admin") and chat_id == ADMIN_ID:
-                    send_message(ADMIN_ID, "👑 **Tam Kontrollü Gelişmiş Yönetim Paneli (30+ Özellik):**", admin_menu)
+                    send_message(ADMIN_ID, "👑 **Yönetim Paneli:**", admin_menu)
                     continue
 
                 if text.startswith("/start"):
                     if chat_id == ADMIN_ID:
-                        send_message(ADMIN_ID, "👑 **Admin Paneline Hoş Geldiniz!**\n\n/admin yazarak yönetim paneline ulaşabilirsiniz.", main_menu)
+                        send_message(ADMIN_ID, "👑 **Admin Paneline Hoş Geldiniz!**\n\n/admin yazarak panele ulaşabilirsiniz.", main_menu)
                         continue
 
                     yeni_kayit = False
@@ -324,7 +320,7 @@ while True:
                         kullanici_verileri[chat_id] = {"referrals": 1, "username": uname, "first_name": fname, "davet_eden": None, "davet_onaylandi": False}
                         yeni_kayit = True
                         verileri_kaydet()
-                        send_message(ADMIN_ID, f"🚨 **Yeni Kullanıcı Katıldı!**\n👤 İsim: {fname}\n🔗 Kullanıcı Adı: @{uname}\n🆔 ID: `{chat_id}`\n📊 Toplam: {len(kullanici_verileri)}")
+                        send_message(ADMIN_ID, f"🚨 **Yeni Kullanıcı Katıldı!**\n👤 İsim: {fname}\n🔗 @{uname}\n🆔 ID: `{chat_id}`")
 
                     args = text.split()
                     if len(args) > 1 and args[1].isdigit():
@@ -335,7 +331,7 @@ while True:
                                 kullanici_verileri[did]["referrals"] += 1
                                 verileri_kaydet()
                                 try:
-                                    send_message(did, f"🎉 **Tebrikler!** Yeni bir davetçi bağlandı. Puanınız artırıldı!")
+                                    send_message(did, f"🎉 **Tebrikler!** Yeni davetçi bağlandı, puanınız artırıldı!")
                                 except:
                                     pass
 
@@ -350,9 +346,9 @@ while True:
                                 [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
                             ]
                         }
-                        send_message(chat_id, f"⚠️ **Eksik Abonelik Tespit Edildi!**\nŞu kanallardan ayrıldığınız tespit edildi: `{' , '.join(eksik_kanallar)}`. Devam etmek için tekrar katılmalısınız.", sub_kb)
+                        send_message(chat_id, f"⚠️ **Eksik Abonelik:**\nŞu kanallardan ayrıldığınız tespit edildi: `{' , '.join(eksik_kanallar)}`.", sub_kb)
                     else:
-                        karsilama = "🎉 **iOS Sertifika Botuna Hoşgeldiniz!**\n\nBizden size güzellik: Hesabınıza **+1 Hediye Referans Puanı** tanımlandı! 🎁\n\n✨ Dilediğiniz gibi işlemlerinizi gerçekleştirebilirsiniz." if yeni_kayit else "✨ **iOS Sertifika Botuna Hoşgeldiniz!**"
+                        karsilama = "🎉 **iOS Sertifika Botuna Hoşgeldiniz!**\n\nHesabınıza **+1 Hediye Referans Puanı** tanımlandı! 🎁" if yeni_kayit else "✨ **iOS Sertifika Botuna Hoşgeldiniz!**"
                         send_message(chat_id, karsilama, main_menu)
 
             if "callback_query" in update:
@@ -375,91 +371,90 @@ while True:
                                 [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
                             ]
                         }
-                        edit_message(chat_id, mid, f"🚨 **Abonelik İhlali Tespit Edildi!**\nKanallarımızdan ayrıldığınız tespit edildi (`{' , '.join(eksik_kanallar)}`). İşlem yapmak için tekrar katılmalısınız!", sub_kb)
+                        edit_message(chat_id, mid, f"🚨 **Abonelik İhlali:**\nKanallardan ayrıldığınız tespit edildi.", sub_kb)
                         continue
 
                 if data == "main_menu":
-                    edit_message(chat_id, mid, "✨ **iOS Sertifika Botu Ana Menü:**", main_menu)
+                    edit_message(chat_id, mid, "✨ **Ana Menü:**", main_menu)
                 elif data == "admin_panel_back" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "👑 **Yönetim Paneli:**", admin_menu)
                 
                 elif data == "adm_stats" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, f"📊 **İstatistikler:**\n• Toplam Kullanıcı: {len(kullanici_verileri)}\n• Banlı Sayısı: {len(engellenenler)}\n• Bakım Modu: {'Açık' if bot_durumu['bakim_modu'] else 'Kapalı'}", back_kb)
+                    edit_message(chat_id, mid, f"📊 **İstatistikler:**\n• Toplam: {len(kullanici_verileri)}\n• Banlı: {len(engellenenler)}", back_kb)
                 elif data == "adm_broadcast" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📢 Duyuru göndermek için sohbete:\n`/duyuru Mesajınız` yazın.", back_kb)
+                    edit_message(chat_id, mid, "📢 `/duyuru Mesaj` yazın.", back_kb)
                 elif data == "adm_users" and chat_id == ADMIN_ID:
                     son = list(kullanici_verileri.items())[-5:]
-                    txt = "👥 **Son Kayıtlı Kullanıcılar:**\n" + "".join([f"• {u['first_name']} (ID: `{uid}`)\n" for uid, u in son]) if son else "Kayıt yok."
+                    txt = "👥 **Son Kullanıcılar:**\n" + "".join([f"• {u['first_name']} (`{uid}`)\n" for uid, u in son]) if son else "Kayıt yok."
                     edit_message(chat_id, mid, txt, back_kb)
                 elif data == "adm_channels" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔗 **Aktif Kanallar:**\n" + "\n".join([f"• @{k}" for k in ZORUNLU_KANALLAR]), back_kb)
+                    edit_message(chat_id, mid, "🔗 **Kanallar:**\n" + "\n".join([f"• @{k}" for k in ZORUNLU_KANALLAR]), back_kb)
                 elif data == "adm_test" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔄 **API Sağlık Testi:** Tüm Telegram API uç noktaları kararlı ve aktif.", back_kb)
+                    edit_message(chat_id, mid, "🔄 **API Testi:** Aktif ve stabil.", back_kb)
                 elif data == "adm_reset" and chat_id == ADMIN_ID:
                     r_kb = {"inline_keyboard": [[{"text": "⚠️ EVET SIFIRLA", "callback_data": "adm_reset_exec"}], [{"text": "🔙 Vazgeç", "callback_data": "admin_panel_back"}]]}
-                    edit_message(chat_id, mid, "⚠️ Tüm kullanıcı veritabanı sıfırlansın mı?", r_kb)
+                    edit_message(chat_id, mid, "⚠️ Veritabanı sıfırlansın mı?", r_kb)
                 elif data == "adm_reset_exec" and chat_id == ADMIN_ID:
                     kullanici_verileri.clear()
                     verileri_kaydet()
-                    edit_message(chat_id, mid, "🧹 Veritabanı başarıyla sıfırlandı.", back_kb)
+                    edit_message(chat_id, mid, "🧹 Veritabanı sıfırlandı.", back_kb)
                 elif data == "adm_toggle_maint" and chat_id == ADMIN_ID:
                     bot_durumu["bakim_modu"] = not bot_durumu["bakim_modu"]
-                    durum_str = "Açıldı 🛠" if bot_durumu["bakim_modu"] else "Kapatıldı ✅"
-                    edit_message(chat_id, mid, f"⚡ Bakım Modu durumu: **{durum_str}**", back_kb)
+                    edit_message(chat_id, mid, f"⚡ Bakım: **{'Açık' if bot_durumu['bakim_modu'] else 'Kapalı'}**", back_kb)
                 elif data == "adm_bonus_prompt" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🎁 Hediye puan vermek için sohbete şunu yazın:\n`/hediye KULLANICI_ID PUAN`", back_kb)
+                    edit_message(chat_id, mid, "🎁 `/hediye ID PUAN` yazın.", back_kb)
                 elif data == "adm_ban_prompt" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🚫 Kullanıcıyı banlamak için sohbete şunu yazın:\n`/ban KULLANICI_ID`", back_kb)
+                    edit_message(chat_id, mid, "🚫 `/ban ID` yazın.", back_kb)
                 elif data == "adm_unban_prompt" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔓 Engellenen kullanıcı bulunmuyor.", back_kb)
+                    edit_message(chat_id, mid, "🔓 Ban listesi boş.", back_kb)
                 elif data == "adm_backup" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📥 **Yedekleme:** Tüm JSON verileri güvenle saklanmaktadır.", back_kb)
+                    edit_message(chat_id, mid, "📥 JSON verileri güvende.", back_kb)
                 elif data == "adm_perf" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🚀 **Performans:** Render sunucu yanıt süresi: 0.12s", back_kb)
+                    edit_message(chat_id, mid, "🚀 Yanıt süresi: 0.12s", back_kb)
                 elif data == "adm_logs" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔍 **Log Akışı:** Hata kaydı bulunmuyor.", back_kb)
+                    edit_message(chat_id, mid, "🔍 Hata yok.", back_kb)
                 elif data == "adm_hook" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🌐 **Webhook:** Long Polling sorunsuz senkronize edildi.", back_kb)
+                    edit_message(chat_id, mid, "🌐 Long Polling aktif.", back_kb)
                 elif data == "adm_ref_reset" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📈 **Referanslar:** Puanlar koruma altında.", back_kb)
+                    edit_message(chat_id, mid, "📈 Puanlar korunuyor.", back_kb)
                 elif data == "adm_faq" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "💡 **SSS:** SSS metinleri aktif.", back_kb)
+                    edit_message(chat_id, mid, "💡 SSS güncel.", back_kb)
                 elif data == "adm_settings" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "⚙️ **Gelişmiş Ayarlar:** Tamam.", back_kb)
+                    edit_message(chat_id, mid, "⚙️ Ayarlar tam.", back_kb)
                 elif data == "adm_reboot" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔄 **Yeniden Başlatma:** Döngü yenilendi.", back_kb)
+                    edit_message(chat_id, mid, "🔄 Döngü yenilendi.", back_kb)
                 elif data == "adm_send_msg" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📨 Özel mesaj modu aktif.", back_kb)
+                    edit_message(chat_id, mid, "📨 Mesaj modu aktif.", back_kb)
                 elif data == "adm_analytics" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📊 **Analitik:** Günlük aktif oran %98.", back_kb)
+                    edit_message(chat_id, mid, "📊 Aktif oran %98.", back_kb)
                 elif data == "adm_vip_add" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "⭐ Manuel VIP paneli aktif.", back_kb)
+                    edit_message(chat_id, mid, "⭐ VIP paneli aktif.", back_kb)
                 elif data == "adm_clean" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "🗑 Önbellek temizlendi.", back_kb)
                 elif data == "adm_firewall" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "🔒 **Güvenlik Duvarı:** Aktif.", back_kb)
+                    edit_message(chat_id, mid, "🔒 Güvenlik duvarı aktif.", back_kb)
                 elif data == "adm_id_list" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, f"📋 Toplam Kayıtlı ID: {len(kullanici_verileri)}", back_kb)
+                    edit_message(chat_id, mid, f"📋 Toplam ID: {len(kullanici_verileri)}", back_kb)
                 elif data == "adm_fast_deploy" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "⚡ Hızlı Dağıtım aktif.", back_kb)
+                    edit_message(chat_id, mid, "⚡ Hızlı dağıtım aktif.", back_kb)
                 elif data == "adm_shield" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "🛡 Kalkan devrede.", back_kb)
                 elif data == "adm_clear_cache" and chat_id == ADMIN_ID:
                     edit_message(chat_id, mid, "🔄 Önbellek temizlendi.", back_kb)
                 elif data == "adm_channel_notif" and chat_id == ADMIN_ID:
-                    edit_message(chat_id, mid, "📢 Bildirim denetimi aktif.", back_kb)
+                    edit_message(chat_id, mid, "📢 Bildirimler aktif.", back_kb)
 
                 elif data == "vip_profile":
                     d_sayi = kullanici_verileri.get(chat_id, {}).get("referrals", 1)
                     if d_sayi >= 15:
-                        p_text = f"👤 **Profil Kartı**\nID: `{chat_id}`\nDavet Puanı: {d_sayi}/15\n\n🎉 **Tebrikler! 15 davete ulaştınız! Ödülünüzü almak için hemen @devolepercertificate adresine yazın!**"
+                        p_text = f"👤 **Profil**\nID: `{chat_id}`\nDavet: {d_sayi}/15\n\n🎉 Ödül için yazın: @devolepercertificate"
                     else:
-                        p_text = f"👤 **Profil Kartı**\nID: `{chat_id}`\nDavet Puanı: {d_sayi}/15 (Hediye Dahil! 🎁)"
+                        p_text = f"👤 **Profil**\nID: `{chat_id}`\nDavet: {d_sayi}/15"
                     edit_message(chat_id, mid, p_text, main_back_kb)
 
                 elif data == "vip_leaderboard":
                     sira = sorted(kullanici_verileri.items(), key=lambda x: x[1].get("referrals", 0), reverse=True)[:3]
-                    lb = "🏆 **Liderlik Tablosu**\n\n" + ("\n".join([f"• {u['first_name']}: {u['referrals']} Puan" for uid, u in sira]) if sira else "Henüz veri yok.")
+                    lb = "🏆 **Liderlik Tablosu**\n\n" + ("\n".join([f"• {u['first_name']}: {u['referrals']} Puan" for uid, u in sira]) if sira else "Veri yok.")
                     edit_message(chat_id, mid, lb, main_back_kb)
 
                 elif data == "send_udid_info":
@@ -468,30 +463,27 @@ while True:
                 elif data == "davet_menu":
                     rlink = f"https://t.me/SertifikaMagazaBot?start={chat_id}"
                     ds = kullanici_verileri.get(chat_id, {}).get("referrals", 1)
-                    if ds >= 15:
-                        d_text = f"🎁 **Davet Et Kazan**\nLinkin:\n`{rlink}`\nDavetlerin: {ds}/15\n\n🎉 **Tebrikler 15 davete ulaştınız! Bu kişiye yazın: @devolepercertificate**"
-                    else:
-                        d_text = f"🎁 **Davet Et Kazan**\nLinkin:\n`{rlink}`\nDavetlerin: {ds}/15"
+                    d_text = f"🎁 **Davet Et Kazan**\nLink:\n`{rlink}`\nDavet: {ds}/15"
                     edit_message(chat_id, mid, d_text, main_back_kb)
 
                 elif data == "ai_menu":
-                    edit_message(chat_id, mid, "🤖 **AI Asistan & Bilgi Bankası:**\nMerak ettiğiniz konuları aşağıdan inceleyebilirsiniz:", ai_kb)
+                    edit_message(chat_id, mid, "🤖 **AI Asistan:**", ai_kb)
                 elif data == "check_subscription":
                     eksik_kanallar = cikarilan_kanali_bul(chat_id)
                     if not eksik_kanallar:
-                        edit_message(chat_id, mid, "✨ Kanallar doğrulandı! Hoş geldin.", main_menu)
+                        edit_message(chat_id, mid, "✨ Kanallar doğrulandı!", main_menu)
                     else:
-                        send_message(chat_id, f"⚠️ Hâlâ eksik kanallar var: `{' , '.join(eksik_kanallar)}`. Lütfen tamamlayın.")
+                        send_message(chat_id, f"⚠️ Eksik kanallar: `{' , '.join(eksik_kanallar)}`.")
                 elif data in ["ai_nedir", "ai_fiyat", "ai_udid", "ai_mod", "ai_guven", "ai_sure", "ai_revoke", "ai_sign"]:
                     cevaplar = {
-                        "ai_nedir": "💡 **iOS Sertifika Nedir?**\nApple Geliştirici programı sayesinde cihazınıza resmi olmayan IPA dosyalarını kurmanıza olanak tanıyan özel bir profildir.",
-                        "ai_fiyat": "💰 **Fiyatlandırma Bilgisi:**\nEn uygun VIP paket fiyatlarımız için Shopier mağazamızı ziyaret edebilirsiniz.",
-                        "ai_udid": "📱 **UDID Nasıl Bulunur?**\nSafari tarayıcınızdan [Get My UDID](https://get.udid.io) adresine girerek kimliğinizi öğrenebilirsiniz.",
-                        "ai_mod": "🎮 **Modlu Oyun & Uygulama:**\nYouTube, Instagram, Spotify gibi uygulamaların hileli/özellikli modlarını kurabilirsiniz.",
-                        "ai_guven": "🛡 **Sistem Güvenilir mi?**\nKesinlikle %100 güvenlidir. Şifreniz asla istenmez, sadece cihaz UDID kaydı yapılır.",
-                        "ai_sure": "⏳ **Süreç Ne Kadar Sürer?**\nUDID kaydınız iletildikten sonra işlemleriniz hızla tamamlanır.",
-                        "ai_revoke": "🔄 **Revoke (Sertifika İptali):**\nVIP paketlerimizde garanti kapsamında yenileme desteği sağlanır.",
-                        "ai_sign": "⚡ **E-Sign / GBox Kurulumu:**\nSertifikanız aktif olduktan sonra imzalama uygulamalarıyla dilediğiniz IPA'yı kurabilirsiniz."
+                        "ai_nedir": "💡 **iOS Sertifika Nedir?**\nCihazınıza imzasız IPA kurmanızı sağlar.",
+                        "ai_fiyat": "💰 **Fiyatlandırma:**\nShopier mağazamızdan inceleyebilirsiniz.",
+                        "ai_udid": "📱 **UDID:** Safari'den get.udid.io adresine bakabilirsiniz.",
+                        "ai_mod": "🎮 **Modlu Uygulama:** Hileli ve özel sürümler kurabilirsiniz.",
+                        "ai_guven": "🛡 %100 güvenlidir, şifre istenmez.",
+                        "ai_sure": "⏳ İşlemler hızlıca tamamlanır.",
+                        "ai_revoke": "🔄 VIP paketlerde değişim garantisi vardır.",
+                        "ai_sign": "⚡ E-Sign veya GBox ile kurabilirsiniz."
                     }
                     edit_message(chat_id, mid, cevaplar[data], ai_kb)
     except Exception as e:
