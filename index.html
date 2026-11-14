@@ -3,140 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sertifika Mağazası</title>
+    <title>iOS Sertifika Mağazası</title>
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: var(--tg-theme-bg-color, #0f172a);
-            --card-bg: var(--tg-theme-secondary-bg-color, #1e293b);
+            --bg-color: var(--tg-theme-bg-color, #090d16);
+            --card-bg: var(--tg-theme-secondary-bg-color, #131c2e);
             --text-color: var(--tg-theme-text-color, #f8fafc);
             --hint-color: var(--tg-theme-hint-color, #94a3b8);
-            --button-color: var(--tg-theme-button-color, #3b82f6);
+            --button-color: var(--tg-theme-button-color, #2f80ed);
             --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --accent-glow: rgba(47, 128, 237, 0.15);
         }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 16px 16px 80px 16px; /* Alt boşluk artırıldı */
+            padding: 16px 16px 90px 16px;
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
         }
+
         .header {
             text-align: center;
             margin-bottom: 24px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
+
         .header h2 {
             margin: 0 0 6px 0;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .header p {
             margin: 0;
             color: var(--hint-color);
-            font-size: 14px;
+            font-size: 13px;
         }
+
         .card {
             background: var(--card-bg);
             border-radius: 16px;
             padding: 18px;
             margin-bottom: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease;
         }
+
+        .card.featured {
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            background: linear-gradient(145deg, #131c2e 0%, #0d2322 100%);
+        }
+
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
+
         .card h3 {
             margin: 0;
-            font-size: 19px;
+            font-size: 17px;
             font-weight: 700;
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
         .card .description {
-            margin: 0 0 16px 0;
+            margin: 0 0 14px 0;
             color: var(--hint-color);
-            font-size: 14px;
-            line-height: 1.5;
+            font-size: 13px;
+            line-height: 1.45;
         }
+
         .info-box {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 16px;
+            padding: 10px 12px;
+            margin-bottom: 14px;
             border-left: 3px solid #3b82f6;
         }
+
+        .card.featured .info-box {
+            border-left-color: #10b981;
+        }
+
         .info-box p {
             margin: 0;
             font-size: 12px;
             color: var(--hint-color);
-            line-height: 1.5;
+            line-height: 1.4;
         }
+
         .info-box strong {
             color: var(--text-color);
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             margin-bottom: 2px;
         }
+
         .price-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .price {
-            font-size: 18px;
-            font-weight: 900;
-            color: #fbbf24; /* Daha parlak yıldız rengi */
+            font-size: 17px;
+            font-weight: 800;
+            color: #fbbf24;
             display: flex;
             align-items: center;
             gap: 4px;
         }
+
         .btn {
-            background-color: var(--button-color);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: var(--button-text);
             border: none;
-            padding: 12px 24px;
+            padding: 11px 20px;
             border-radius: 10px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s ease;
         }
+
         .btn:active {
-            background-color: #2563eb;
-            transform: scale(0.98);
+            transform: scale(0.97);
+            opacity: 0.9;
         }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
         .badge {
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
         .badge-standart {
             background-color: rgba(59, 130, 246, 0.15);
             color: #60a5fa;
         }
+
         .badge-pro {
             background-color: rgba(16, 185, 129, 0.15);
             color: #34d399;
         }
-        .badge-support {
-            background-color: rgba(245, 158, 11, 0.15);
-            color: #fbbd24;
+
+        .support-card {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            text-align: center;
+            padding: 16px;
         }
+
         .footer-note {
             text-align: center;
             color: var(--hint-color);
             font-size: 11px;
-            margin-top: 20px;
-            padding: 0 20px;
+            margin-top: 24px;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -144,7 +193,7 @@
 
     <div class="header">
         <h2>🛡️ iOS Sertifika Merkezi</h2>
-        <p id="user-greeting">Yükleniyor...</p>
+        <p id="user-greeting">Kullanıcı doğrulanıyor...</p>
     </div>
 
     <!-- 3 Aylık Paket -->
@@ -153,85 +202,82 @@
             <h3>3 Aylık Paket</h3>
             <span class="badge badge-standart">Standart</span>
         </div>
-        <p class="description">ESign, KSign ve GBox ile tam uyumlu, 3 ay boyunca stabil kurumsal sertifika ve temel destek.</p>
+        <p class="description">ESign, KSign ve GBox ile tam uyumlu, 3 ay stabil kurumsal sertifika deneyimi.</p>
         
         <div class="info-box">
-            <strong>ℹ️ Sertifika Bilgisi:</strong>
-            <p><strong>Kapsam:</strong> Standart UDID kaydı (Revoke riski var, olursa ücretsiz değişim süreci işler).</p>
-            <p><strong>Süre:</strong> 3 Ay Kesintisiz Kullanım</p>
+            <strong>ℹ️ Paket Kapsamı:</strong>
+            <p>• Standart UDID Kaydı<br>• Revoke durumunda değişim süreci<br>• 1 Cihaz Hakkı</p>
         </div>
 
         <div class="price-row">
             <span class="price">⭐ 350 Yıldız</span>
-            <button class="btn" onclick="satinAl('3 Aylık Sertifika', 350)">Şimdi Satın Al</button>
+            <button class="btn" onclick="telegramYildizOdemesi('3 Aylık Sertifika', 350)">Satın Al</button>
         </div>
     </div>
 
     <!-- 12 Aylık Paket -->
-    <div class="card" style="border: 2px solid #10b981;">
+    <div class="card featured">
         <div class="card-header">
             <h3>12 Aylık Pro Paket</h3>
-            <span class="badge badge-pro">En Popüler / Pro</span>
+            <span class="badge badge-pro">En Popüler</span>
         </div>
-        <p class="description">1 yıl boyunca en stabil kurumsal sertifikalarla kesintisiz deneyim. Revoke durumunda öncelikli değişim ve VIP destek.</p>
+        <p class="description">1 yıl boyunca en kararlı kurumsal havuzlar, öncelikli değişim ve VIP destek.</p>
         
-        <div class="info-box" style="border-left-color: #10b981;">
-            <strong>ℹ️ Sertifika Bilgisi (Pro):</strong>
-            <p><strong>Kapsam:</strong> Premium UDID Slotu (Daha dayanıklı kurumsal sertifika havuzu).</p>
-            <p><strong>Süre:</strong> 1 Yıl Garanti</p>
-            <p><strong>Destek:</strong> Hızlı Destek Hattı</p>
+        <div class="info-box">
+            <strong>ℹ️ Pro Paket Kapsamı:</strong>
+            <p>• Premium UDID Slotu (Uzun Ömürlü)<br>• 1 Yıl Tam Garanti<br>• Öncelikli Hızlı Destek</p>
         </div>
 
         <div class="price-row">
             <span class="price">⭐ 625 Yıldız</span>
-            <button class="btn" onclick="satinAl('12 Aylık Sertifika', 625)">Satın Al</button>
+            <button class="btn btn-success" onclick="telegramYildizOdemesi('12 Aylık Sertifika', 625)">Hemen Al</button>
         </div>
     </div>
 
-    <!-- Yardım ve Destek Kartı -->
-    <div class="card" style="background-color: var(--tg-theme-hint-color, #94a3b8); opacity: 0.9;">
-        <div class="card-header">
-            <h3 style="color: var(--bg-color);">❓ Kurulum & Destek</h3>
-            <span class="badge badge-support">Yardım</span>
-        </div>
-        <p class="description" style="color: var(--bg-color); opacity: 0.9;">Kurulumda hata mı aldın veya sertifikan revoke mı oldu? Destek kanalımıza katıl veya SSS bölümüne göz at.</p>
-        
-        <div class="price-row">
-            <span class="price" style="font-size: 13px; color: var(--bg-color);">7/24 Otomatik Destek</span>
-            <button class="btn" style="background-color: var(--bg-color); color: var(--card-bg);" onclick="tg.openLink('https://t.me/SeninDestekKanalin')">Destek Al</button>
-        </div>
+    <!-- Destek Kartı -->
+    <div class="card support-card">
+        <h3 style="justify-content: center; margin-bottom: 6px;">💬 Yardıma mı İhtiyacın Var?</h3>
+        <p class="description" style="margin-bottom: 12px;">Sertifika kurulumu veya ödeme sonrasında takıldığın her an doğrudan destek al.</p>
+        <button class="btn" style="width: 100%; background: linear-gradient(135deg, #6366f1, #4f46e5);" onclick="destekAc()">Destek Hattına Bağlan</button>
     </div>
 
     <div class="footer-note">
-        Ödemeler resmi Telegram Yıldız (Stars) sistemi ile güvenle yapılır. Dijital ürün olduğu için iade yoktur. Sorun yaşarsan destek ile iletişime geç.
+        Ödemeler Telegram Yıldızları (Stars) ile güvenle gerçekleştirilir.<br>Dijital lisans ürünlerinde iade yapılmaz.
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
+        // Kullanıcı karşılama mesajı
         let user = tg.initDataUnsafe.user;
         if (user) {
-            document.getElementById('user-greeting').innerText = `Merhaba, ${user.first_name}! Paketini seçebilirsin.`;
+            document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}! Paketini seçebilirsin.`;
         } else {
-            document.getElementById('user-greeting').innerText = `Sertifikanı hemen seç ve kur.`;
+            document.getElementById('user-greeting').innerText = `Güvenli ve hızlı iOS sertifika çözümleri.`;
         }
 
-        function satinAl(paketAdi, yildizMiktari) {
-            tg.showConfirm(`Seçtiğiniz ${paketAdi} için ${yildizMiktari} Telegram Yıldızı ödemek istiyor musunuz?`, function(confirmed) {
+        // Telegram Yıldız ile Ödeme ve Veri İletimi
+        function telegramYildizOdemesi(paketAdi, yildizMiktari) {
+            tg.showConfirm(`${paketAdi} için ${yildizMiktari} Telegram Yıldızı ödemek istiyor musun?`, function(confirmed) {
                 if (confirmed) {
-                    // Bu kısımda satın alma verisini botuna gönderiyoruz.
+                    // Botunuza sipariş verisini gönderir
                     tg.sendData(JSON.stringify({ 
-                        action: "buy_cert", 
+                        action: "buy_stars", 
                         package: paketAdi, 
                         stars: yildizMiktari,
-                        timestamp: new Date().toISOString()
+                        user_id: user ? user.id : 'unknown'
                     }));
                     
-                    // İşlem sonrası kullanıcıyı bilgilendirebilir veya mini app'i kapatabilirsin.
-                    // tg.close(); // İsteğe bağlı olarak kapatabilirsin.
+                    // İşlem sonrası mini app'i kapatıp bota yönlendirir
+                    tg.close();
                 }
             });
+        }
+
+        // Doğrudan sizin kullanıcı adınıza yönlendiren destek fonksiyonu
+        function destekAc() {
+            tg.openTelegramLink("https://t.me/devolepercertificate");
         }
     </script>
 </body>
