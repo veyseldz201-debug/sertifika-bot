@@ -4,23 +4,17 @@ import urllib.parse
 import time
 import threading
 import os
-from flask import Flask, send_from_directory
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 # -------------------------------------------------------------
-# 1. FLASK WEB SUNUCUSU (Mini App & Render 24/7 Web Destegi)
+# 1. SAF PYTHON İLE MINI APP SUNUCUSU (Ek paket gerektirmez!)
 # -------------------------------------------------------------
-app = Flask(__name__, static_folder='.')
-
-@app.route('/')
-def serve_index():
-    return send_from_directory('.', 'index.html')
-
-def run_flask():
+def run_server():
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    server = HTTPServer(('0.0.0.0', port), SimpleHTTPRequestHandler)
+    server.serve_forever()
 
-# Flask sunucusunu arka planda başlatıyoruz
-threading.Thread(target=run_flask, daemon=True).start()
+threading.Thread(target=run_server, daemon=True).start()
 
 # -------------------------------------------------------------
 # 2. TELEGRAM BOT AYARLARI VE LİSTE
