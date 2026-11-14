@@ -7,7 +7,7 @@ import os
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 # -------------------------------------------------------------
-# 1. SAF PYTHON İLE MINI APP SUNUCUSU (Ek paket gerektirmez, hata vermez)
+# 1. SAF PYTHON İLE MINI APP SUNUCUSU (24/7 Render Destekli)
 # -------------------------------------------------------------
 def run_server():
     port = int(os.environ.get("PORT", 10000))
@@ -170,7 +170,6 @@ def answer_callback_query(cq_id):
         with urllib.request.urlopen(req): pass
     except: pass
 
-# Telegram Yıldız (Stars) Fatura Gönderme Fonksiyonu
 def send_invoice(chat_id, title, description, amount_stars):
     if not TOKEN: return
     prices = [{"label": title, "amount": amount_stars}]
@@ -179,7 +178,7 @@ def send_invoice(chat_id, title, description, amount_stars):
         "title": title,
         "description": description,
         "payload": f"sertifika_lisans_{amount_stars}",
-        "currency": "XTR",  # Telegram Stars resmi para birimi kodu
+        "currency": "XTR",
         "prices": json.dumps(prices)
     }
     req = urllib.request.Request(f"{BASE_URL}/sendInvoice", data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
@@ -188,6 +187,16 @@ def send_invoice(chat_id, title, description, amount_stars):
             return json.loads(resp.read().decode())
     except Exception as e:
         print("Fatura gönderme hatası:", e)
+
+def answer_pre_checkout_query(pcq_id, ok=True, error_message=""):
+    if not TOKEN: return
+    data = {"pre_checkout_query_id": pcq_id, "ok": ok}
+    if not ok and error_message:
+        data["error_message"] = error_message
+    req = urllib.request.Request(f"{BASE_URL}/answerPreCheckoutQuery", data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
+    try:
+        with urllib.request.urlopen(req): pass
+    except: pass
 
 def get_updates(offset=None):
     if not TOKEN:
@@ -270,7 +279,30 @@ while True:
         for update in updates:
             offset = update["update_id"] + 1
             
-            # Mini App'ten gelen satın alma verisini yakala ve yıldız faturası gönder
+            # 1. Ödeme Ön Onay İstemi (Pre-Checkout Query) Yakalama
+            if "pre_checkout_query" in update:
+                pcq = update["pre_checkout_query"]
+                answer_pre_checkout_query(pcq["id"], ok=True)
+                continue
+
+            # 2. Başarılı Ödeme (Successful Payment) Yakalama -> Sana Bildirim Gider
+            if "message" in update and "successful_payment" in update["message"]:
+                s_msg = update["message"]
+                s_chat_id = s_msg["chat"]["id"]
+                s_user = s_msg["from"]
+                s_uname = s_user.get("username", "Yok")
+                s_fname = s_user.get("first_name", "İsimsiz")
+                payment_info = s_msg["successful_payment"]
+                total_stars = payment_info.get("total_amount")
+                
+                # Kullanıcıya bilgi ver
+                send_message(s_chat_id, f"🎉 **Ödemeniz Başarıyla Alındı!**\n\n⭐ Ödenen Yıldız: {total_stars}\n\nLütfen UDID kaydınızı destek hattına ileterek sertifikanızı teslim alınız: @devolepercertificate")
+                
+                # Sana (Admin'e) anlık bildirim gönder
+                send_message(ADMIN_ID, f"💰 **YENİ YILDIZ SATIŞI GERÇEKLEŞTİ!**\n\n👤 Müşteri: {s_fname} (@{s_uname})\n🆔 ID: `{s_chat_id}`\n⭐ Tutar: {total_stars} Telegram Stars")
+                continue
+
+            # 3. Mini App'ten gelen satın alma verisini yakala ve fatura gönder
             if "message" in update:
                 msg = update["message"]
                 chat_id = msg["chat"]["id"]
