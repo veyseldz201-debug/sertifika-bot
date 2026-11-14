@@ -7,7 +7,7 @@ import os
 from flask import Flask, send_from_directory
 
 # -------------------------------------------------------------
-# 1. FLASK WEB SUNUCUSU (Mini App için index.html sunucu)
+# 1. FLASK WEB SUNUCUSU (Mini App & Render 24/7 Web Destegi)
 # -------------------------------------------------------------
 app = Flask(__name__, static_folder='.')
 
@@ -19,7 +19,7 @@ def run_flask():
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
 
-# Flask'ı arka planda başlatıyoruz
+# Flask sunucusunu arka planda başlatıyoruz
 threading.Thread(target=run_flask, daemon=True).start()
 
 # -------------------------------------------------------------
