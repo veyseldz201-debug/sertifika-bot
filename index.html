@@ -14,7 +14,6 @@
             --hint-color: var(--tg-theme-hint-color, #94a3b8);
             --button-color: var(--tg-theme-button-color, #2f80ed);
             --button-text: var(--tg-theme-button-text-color, #ffffff);
-            --accent-glow: rgba(47, 128, 237, 0.15);
         }
         
         body {
@@ -38,7 +37,6 @@
             margin: 0 0 6px 0;
             font-size: 22px;
             font-weight: 800;
-            letter-spacing: -0.5px;
             background: linear-gradient(135deg, #60a5fa, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -55,11 +53,8 @@
             border-radius: 16px;
             padding: 18px;
             margin-bottom: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.04);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s ease;
         }
 
         .card.featured {
@@ -78,12 +73,9 @@
             margin: 0;
             font-size: 17px;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .card .description {
+        .description {
             margin: 0 0 14px 0;
             color: var(--hint-color);
             font-size: 13px;
@@ -126,9 +118,6 @@
             font-size: 17px;
             font-weight: 800;
             color: #fbbf24;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .btn {
@@ -141,7 +130,6 @@
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-            transition: all 0.2s ease;
         }
 
         .btn:active {
@@ -160,18 +148,10 @@
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .badge-standart {
-            background-color: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-        }
-
-        .badge-pro {
-            background-color: rgba(16, 185, 129, 0.15);
-            color: #34d399;
-        }
+        .badge-standart { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge-pro { background-color: rgba(16, 185, 129, 0.15); color: #34d399; }
 
         .support-card {
             background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
@@ -193,7 +173,7 @@
 
     <div class="header">
         <h2>🛡️ iOS Sertifika Merkezi</h2>
-        <p id="user-greeting">Kullanıcı doğrulanıyor...</p>
+        <p id="user-greeting">Güvenli ve hızlı lisans çözümleri</p>
     </div>
 
     <!-- 3 Aylık Paket -->
@@ -237,7 +217,7 @@
     <!-- Destek Kartı -->
     <div class="card support-card">
         <h3 style="justify-content: center; margin-bottom: 6px;">💬 Yardıma mı İhtiyacın Var?</h3>
-        <p class="description" style="margin-bottom: 12px;">Sertifika kurulumu veya ödeme sonrasında takıldığın her an doğrudan destek al.</p>
+        <p class="description" style="margin-bottom: 12px;">Sertifika kurulumu veya ödeme sonrasında takıldığın her an destek al.</p>
         <button class="btn" style="width: 100%; background: linear-gradient(135deg, #6366f1, #4f46e5);" onclick="destekAc()">Destek Hattına Bağlan</button>
     </div>
 
@@ -249,27 +229,20 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Kullanıcı karşılama mesajı
         let user = tg.initDataUnsafe.user;
         if (user) {
             document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}! Paketini seçebilirsin.`;
-        } else {
-            document.getElementById('user-greeting').innerText = `Güvenli ve hızlı iOS sertifika çözümleri.`;
         }
 
-        // Telegram Yıldız ile Ödeme ve Veri İletimi
+        // Python botuna doğrudan sinyal gönderip faturayı tetikleyen fonksiyon
         function telegramYildizOdemesi(paketAdi, yildizMiktari) {
             tg.showConfirm(`${paketAdi} için ${yildizMiktari} Telegram Yıldızı ödemek istiyor musun?`, function(confirmed) {
                 if (confirmed) {
-                    // Botunuza sipariş verisini gönderir
                     tg.sendData(JSON.stringify({ 
                         action: "buy_stars", 
                         package: paketAdi, 
-                        stars: yildizMiktari,
-                        user_id: user ? user.id : 'unknown'
+                        stars: yildizMiktari 
                     }));
-                    
-                    // İşlem sonrası mini app'i kapatıp bota yönlendirir
                     tg.close();
                 }
             });
