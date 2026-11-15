@@ -170,6 +170,7 @@ def answer_callback_query(cq_id):
         with urllib.request.urlopen(req): pass
     except: pass
 
+# Telegram Yıldız (Stars) Fatura Gönderme Fonksiyonu (EKLENEN)
 def send_invoice(chat_id, title, description, amount_stars):
     if not TOKEN: return
     prices = [{"label": title, "amount": amount_stars}]
@@ -295,18 +296,16 @@ while True:
                 payment_info = s_msg["successful_payment"]
                 total_stars = payment_info.get("total_amount")
                 
-                # Kullanıcıya bilgi ver
                 send_message(s_chat_id, f"🎉 **Ödemeniz Başarıyla Alındı!**\n\n⭐ Ödenen Yıldız: {total_stars}\n\nLütfen UDID kaydınızı destek hattına ileterek sertifikanızı teslim alınız: @devolepercertificate")
-                
-                # Sana (Admin'e) anlık bildirim gönder
                 send_message(ADMIN_ID, f"💰 **YENİ YILDIZ SATIŞI GERÇEKLEŞTİ!**\n\n👤 Müşteri: {s_fname} (@{s_uname})\n🆔 ID: `{s_chat_id}`\n⭐ Tutar: {total_stars} Telegram Stars")
                 continue
 
-            # 3. Mini App'ten gelen satın alma verisini yakala ve fatura gönder
+            # 3. Mesaj ve Mini App Verisi İşleme
             if "message" in update:
                 msg = update["message"]
                 chat_id = msg["chat"]["id"]
                 
+                # Mini App'ten gelen satın alma verisini yakala ve faturayı fırlat (EKLENEN KISIM)
                 if "web_app_data" in msg:
                     try:
                         w_data = json.loads(msg["web_app_data"]["data"])
