@@ -225,7 +225,7 @@
         Ödemeler Telegram Yıldızları (Stars) ile güvenle gerçekleştirilir.<br>Dijital lisans ürünlerinde iade yapılmaz.
     </div>
 
-    <script>
+        <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
@@ -234,24 +234,20 @@
             document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}! Paketini seçebilirsin.`;
         }
 
-        // Python botuna doğrudan sinyal gönderip faturayı tetikleyen fonksiyon
+        // Doğrudan bot sohbetine yönlendirip faturayı tetikleyen kesin çözüm
         function telegramYildizOdemesi(paketAdi, yildizMiktari) {
             tg.showConfirm(`${paketAdi} için ${yildizMiktari} Telegram Yıldızı ödemek istiyor musun?`, function(confirmed) {
                 if (confirmed) {
-                    tg.sendData(JSON.stringify({ 
-                        action: "buy_stars", 
-                        package: paketAdi, 
-                        stars: yildizMiktari 
-                    }));
-                    tg.close();
+                    // Kullanıcıyı doğrudan botun içine faturasını almaya yönlendirir
+                    window.location.href = `https://t.me/SertifikaMagazaBot?start=odeme_${yildizMiktari}`;
                 }
             });
         }
 
-        // Doğrudan sizin kullanıcı adınıza yönlendiren destek fonksiyonu
         function destekAc() {
             tg.openTelegramLink("https://t.me/devolepercertificate");
         }
     </script>
+
 </body>
 </html>
