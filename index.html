@@ -22,15 +22,18 @@
         }
         .header { text-align: center; margin-bottom: 24px; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
         .header h2 { margin: 0 0 6px 0; font-size: 22px; font-weight: 800; color: #60a5fa; }
+        .header p { margin: 0; color: var(--hint-color); font-size: 13px; }
         .card { background: var(--card-bg); border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.04); }
-        .card.featured { border: 1px solid rgba(16, 185, 129, 0.4); }
+        .card.featured { border: 1px solid rgba(16, 185, 129, 0.4); background: linear-gradient(145deg, #131c2e 0%, #0d2322 100%); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .card h3 { margin: 0; font-size: 17px; font-weight: 700; }
         .description { margin: 0 0 14px 0; color: var(--hint-color); font-size: 13px; line-height: 1.45; }
         .info-box { background: rgba(0, 0, 0, 0.25); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; border-left: 3px solid #3b82f6; }
+        .card.featured .info-box { border-left-color: #10b981; }
+        .info-box p { margin: 0; font-size: 12px; color: var(--hint-color); line-height: 1.4; }
         .price-row { display: flex; justify-content: space-between; align-items: center; }
         .price { font-size: 17px; font-weight: 800; color: #fbbf24; }
-        .btn { background-color: #3b82f6; color: #ffffff; border: none; padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; text-align: center; margin-top: 10px;}
+        .btn { background-color: #3b82f6; color: #ffffff; border: none; padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; text-align: center; margin-top: 10px; }
         .btn-success { background-color: #10b981; }
     </style>
 </head>
@@ -45,11 +48,11 @@
             <h3>3 Aylık Paket</h3>
         </div>
         <p class="description">ESign, KSign ve GBox ile tam uyumlu, 3 ay stabil kurumsal sertifika.</p>
-        <div class="info-box"><p>• Standart UDID Kaydı<br>• Revoke değişim süreci</p></div>
+        <div class="info-box"><p>• Standart UDID Kaydı<br>• Revoke değişim süreci<br>• 1 Cihaz Hakkı</p></div>
         <div class="price-row">
             <span class="price">⭐ 350 Yıldız</span>
         </div>
-        <button class="btn" onclick=" yonlendirShopier('3 Aylık Paket (350 Yıldız)')">Satın Al (Destek ile İletişim)</button>
+        <button class="btn" onclick="yildizIleOde('3 Aylık Sertifika', 350)">Telegram Yıldızı ile Satın Al</button>
     </div>
 
     <div class="card featured">
@@ -57,24 +60,26 @@
             <h3>12 Aylık Pro Paket</h3>
         </div>
         <p class="description">1 yıl boyunca en kararlı kurumsal havuzlar ve VIP destek.</p>
-        <div class="info-box"><p>• Premium UDID Slotu<br>• 1 Yıl Tam Garanti</p></div>
+        <div class="info-box"><p>• Premium UDID Slotu<br>• 1 Yıl Tam Garanti<br>• Öncelikli Destek</p></div>
         <div class="price-row">
             <span class="price">⭐ 625 Yıldız</span>
         </div>
-        <button class="btn btn-success" onclick="yonlendirShopier('12 Aylık Pro Paket (625 Yıldız)')">Hemen Al (Destek ile İletişim)</button>
+        <button class="btn btn-success" onclick="yildizIleOde('12 Aylık Pro Sertifika', 625)">Hemen Al (625 Yıldız)</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
+        
         let user = tg.initDataUnsafe && tg.initDataUnsafe.user;
         if (user && user.first_name) {
             document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}!`;
         }
 
-        function yonlendirShopier(paket) {
-            window.Telegram.WebApp.openTelegramLink('https://t.me/devolepercertificate');
+        function yildizIleOde(paketAdi, yildizMiktari) {
+            // Bot tarafında fatura linki oluşturulup buraya bağlanabilir veya doğrudan bota tetikleyici atılabilir
+            tg.sendData(JSON.stringify({ action: "buy_stars", package: paketAdi, stars: yildizMiktari }));
+            tg.close();
         }
     </script>
 </body>
