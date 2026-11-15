@@ -19,7 +19,8 @@ threading.Thread(target=run_server, daemon=True).start()
 # -------------------------------------------------------------
 # 2. TELEGRAM BOT AYARLARI VE LİSTE
 # -------------------------------------------------------------
-TOKEN = os.environ.get("BOT_TOKEN", "").strip()
+TOKEN = "8989644682:AAECpbUznVsM_3ZxBBmnrQQZLvJ4Nl7javI"
+, "").strip()
 ADMIN_ID = 8578298828
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
