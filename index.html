@@ -3,68 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOS Sertifika Mağazası</title>
+    <title>iOS Sertifika Merkezi</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: var(--tg-theme-bg-color, #090d16);
-            --card-bg: var(--tg-theme-secondary-bg-color, #131c2e);
-            --text-color: var(--tg-theme-text-color, #f8fafc);
-            --hint-color: var(--tg-theme-hint-color, #94a3b8);
+            --bg-color: #0b0f19;
+            --card-bg: #131b2e;
+            --card-border: rgba(59, 130, 246, 0.2);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-gold: #fbbf24;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             margin: 0;
-            padding: 16px 16px 90px 16px;
+            padding: 20px 16px 100px 16px;
             box-sizing: border-box;
         }
-        .header { text-align: center; margin-bottom: 24px; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
-        .header h2 { margin: 0 0 6px 0; font-size: 22px; font-weight: 800; color: #60a5fa; }
-        .header p { margin: 0; color: var(--hint-color); font-size: 13px; }
-        .card { background: var(--card-bg); border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.04); }
-        .card.featured { border: 1px solid rgba(16, 185, 129, 0.4); background: linear-gradient(145deg, #131c2e 0%, #0d2322 100%); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .card h3 { margin: 0; font-size: 17px; font-weight: 700; }
-        .description { margin: 0 0 14px 0; color: var(--hint-color); font-size: 13px; line-height: 1.45; }
-        .info-box { background: rgba(0, 0, 0, 0.25); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; border-left: 3px solid #3b82f6; }
-        .card.featured .info-box { border-left-color: #10b981; }
-        .info-box p { margin: 0; font-size: 12px; color: var(--hint-color); line-height: 1.4; }
-        .price-row { display: flex; justify-content: space-between; align-items: center; }
-        .price { font-size: 17px; font-weight: 800; color: #fbbf24; }
-        .btn { background-color: #3b82f6; color: #ffffff; border: none; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; text-align: center; margin-top: 10px; }
-        .btn-success { background-color: #10b981; }
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding: 15px 0;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+        .header h2 {
+            margin: 0 0 6px 0;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 18px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+        .card.featured {
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            background: linear-gradient(145deg, #131b2e 0%, #0d2322 100%);
+        }
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--accent-gold);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        .card-header h3 {
+            margin: 0 0 8px 0;
+            font-size: 19px;
+            font-weight: 700;
+        }
+        .description {
+            margin: 0 0 16px 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .features-list {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            border-left: 3px solid var(--accent-blue);
+        }
+        .card.featured .features-list {
+            border-left-color: var(--accent-green);
+        }
+        .features-list p {
+            margin: 4px 0;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .price-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent-gold);
+        }
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: opacity 0.2s;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        .btn:active {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h2>🛡️ iOS Sertifika Merkezi</h2>
-        <p id="user-greeting">Güvenli ve hızlı lisans çözümleri</p>
+        <p id="user-greeting">Güvenli ve kesintisiz lisans çözümleri</p>
     </div>
 
     <div class="card">
+        <div class="badge">Popüler</div>
         <div class="card-header">
             <h3>3 Aylık Paket</h3>
         </div>
-        <p class="description">ESign, KSign ve GBox ile tam uyumlu, 3 ay stabil kurumsal sertifika.</p>
-        <div class="info-box"><p>• Standart UDID Kaydı<br>• Revoke değişim süreci<br>• 1 Cihaz Hakkı</p></div>
-        <div class="price-row">
+        <p class="description">ESign, KSign ve GBox ile tam uyumlu, stabil kurumsal sertifika.</p>
+        <div class="features-list">
+            <p>• Standart UDID Kaydı</p>
+            <p>• Revoke değişim süreci</p>
+            <p>• 1 Cihaz Hakkı</p>
+        </div>
+        <div class="price-footer">
             <span class="price">⭐ 350 Yıldız</span>
         </div>
-        <button class="btn" onclick="yildizIleOde('3 Aylık Sertifika', 350)">Telegram Yıldızı ile Satın Al</button>
+        <button class="btn" style="margin-top: 14px;" onclick="yildizIleOde(350)">Telegram Yıldızı ile Satın Al</button>
     </div>
 
     <div class="card featured">
+        <div class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3);">VIP PRO</div>
         <div class="card-header">
             <h3>12 Aylık Pro Paket</h3>
         </div>
-        <p class="description">1 yıl boyunca en kararlı kurumsal havuzlar ve VIP destek.</p>
-        <div class="info-box"><p>• Premium UDID Slotu<br>• 1 Yıl Tam Garanti<br>• Öncelikli Destek</p></div>
-        <div class="price-row">
+        <p class="description">1 yıl boyunca en kararlı kurumsal havuzlar ve öncelikli VIP destek.</p>
+        <div class="features-list">
+            <p>• Premium UDID Slotu</p>
+            <p>• 1 Yıl Tam Garanti</p>
+            <p>• Öncelikli Canlı Destek</p>
+        </div>
+        <div class="price-footer">
             <span class="price">⭐ 625 Yıldız</span>
         </div>
-        <button class="btn btn-success" onclick="yildizIleOde('12 Aylık Pro Sertifika', 625)">Hemen Al (625 Yıldız)</button>
+        <button class="btn btn-success" style="margin-top: 14px;" onclick="yildizIleOde(625)">Hemen Al (625 Yıldız)</button>
     </div>
 
     <script>
@@ -76,9 +180,9 @@
             document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}!`;
         }
 
-        function yildizIleOde(paketAdi, yildizMiktari) {
-            // Verinin havada kalmasını önlemek için doğrudan bot sohbetine parametreli yönlendirme yapıyoruz
-            const botUsername = "SertifikaMagazaBot"; 
+        function yildizIleOde(yildizMiktari) {
+            // Kesin ve sorunsuz tetikleme için doğrudan bot sohbetine parametreyle yönlendirir
+            const botUsername = "SertifikaMagazaBot";
             window.Telegram.WebApp.openTelegramLink(`https://t.me/${botUsername}?start=odeme_${yildizMiktari}`);
         }
     </script>
