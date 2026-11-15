@@ -19,7 +19,7 @@ threading.Thread(target=run_server, daemon=True).start()
 # -------------------------------------------------------------
 # 2. TELEGRAM BOT AYARLARI VE LİSTE
 # -------------------------------------------------------------
-TOKEN = "8989644682:AAECpbUznVsM_3ZxBBmnrQQZLvJ4Nl7javI"
+TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 ADMIN_ID = 8578298828
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 
@@ -369,6 +369,7 @@ while True:
                     continue
 
                 if text.startswith("/start"):
+                    # DÜZELTME: Artık sen (Admin) /start verdiğinde de bot takılmıyor, normal akışa devam ediyor
                     if chat_id not in kullanici_verileri:
                         kullanici_verileri[chat_id] = {"referrals": 1, "username": uname, "first_name": fname, "davet_eden": None, "davet_onaylandi": False}
                         verileri_kaydet()
