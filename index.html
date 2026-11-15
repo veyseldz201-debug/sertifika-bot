@@ -55,7 +55,7 @@
             color: var(--text-muted);
             font-size: 13px;
         }
-        /* 24 Saatlik İndirim Banneri & Sayaç */
+        /* 24 Saatlik Gerçek Zamanlı Ortak Sayaç Banneri */
         .discount-banner {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(251, 191, 36, 0.2));
             border: 1px solid rgba(239, 68, 68, 0.4);
@@ -263,7 +263,7 @@
         <p id="user-greeting">Güvenli ve kesintisiz lisans çözümleri</p>
     </div>
 
-    <!-- 24 Saatlik İndirim Sayaç Banneri -->
+    <!-- 24 Saatlik Gerçek Zamanlı Ortak Sayaç Banneri -->
     <div class="discount-banner">
         <h4>⚡ Bugüne Özel 24 Saatlik İndirim! ⚡️</h4>
         <div class="countdown" id="countdown-timer">23:59:59</div>
@@ -366,40 +366,39 @@
             document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}!`;
         }
 
-        // 24 Saatlik Geri Sayım Mantığı
-        function startCountdown() {
-            // Süreyi localstorage üzerinden tutuyoruz ki sayfa yenilense bile sıfırlanmasın (24 saatlik döngü)
-            let timer = localStorage.getItem('discount_timer');
-            let timeSpan = 24 * 60 * 60; // 24 saat saniye cinsinden
+        // GERÇEK ZAMANLI ORTAK 24 SAATLİK SAYAC MANTIĞI
+        function startRealtimeCountdown() {
+            let countDownDate = localStorage.getItem('global_discount_deadline');
+            let now = new Date().getTime();
             
-            if (!timer) {
-                timer = Math.floor(Date.now() / 1000) + timeSpan;
-                localStorage.setItem('discount_timer', timer);
+            if (!countDownDate || now > parseInt(countDownDate)) {
+                countDownDate = now + (24 * 60 * 60 * 1000); // 24 saat ekle
+                localStorage.setItem('global_discount_deadline', countDownDate);
             }
 
-            setInterval(function () {
-                let now = Math.floor(Date.now() / 1000);
-                let remaining = timer - now;
+            setInterval(function() {
+                let currentTimestamp = new Date().getTime();
+                let distance = countDownDate - currentTimestamp;
 
-                if (remaining <= 0) {
-                    remaining = timeSpan;
-                    timer = now + timeSpan;
-                    localStorage.setItem('discount_timer', timer);
+                if (distance < 0) {
+                    countDownDate = new Date().getTime() + (24 * 60 * 60 * 1000);
+                    localStorage.setItem('global_discount_deadline', countDownDate);
+                    distance = countDownDate - currentTimestamp;
                 }
 
-                let hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (60 * 60));
-                let minutes = Math.floor((remaining % (60 * 60)) / 60);
-                let seconds = Math.floor(remaining % 60);
+                let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                // Çift haneli gösterim için 0 ekleme
                 hours = hours < 10 ? "0" + hours : hours;
                 minutes = minutes < 10 ? "0" + minutes : minutes;
                 seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                document.getElementById("countdown-timer").innerText = `${hours}:${minutes}:${seconds}`;
+                document.getElementById("countdown-timer").innerText = hours + ":" + minutes + ":" + seconds;
             }, 1000);
         }
-        startCountdown();
+        
+        startRealtimeCountdown();
 
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
