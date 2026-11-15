@@ -66,7 +66,6 @@
         </div>
         <button class="btn btn-success" onclick="yildizIleOde('12 Aylık Pro Sertifika', 625)">Hemen Al (625 Yıldız)</button>
     </div>
-
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
@@ -77,16 +76,15 @@
         }
 
         function yildizIleOde(paketAdi, yildizMiktari) {
-            // Seçilen paket ve yıldız bilgisini bota güvenle fırlatır
-            const veri = JSON.stringify({
-                action: "buy_stars",
-                package: paketAdi,
-                stars: yildizMiktari
-            });
+            // Mini App'i kapatıp kullanıcıyı doğrudan botun içine yönlendiriyoruz 
+            // ve bota otomatik olarak /start veya paket komutu attırıyoruz
+            const botUsername = "SertifikaMagazaBot"; // Botunun kullanıcı adı
+            const odemeMesaji = encodeURIComponent(`⭐ ${paketAdi} (${yildizMiktari} Yıldız) satın almak istiyorum.`);
             
-            tg.sendData(veri);
-            tg.close();
+            // Telegram içerisinden bot sohbetine yönlendirir
+            window.Telegram.WebApp.openTelegramLink(`https://t.me/${botUsername}?start=odeme_${yildizMiktari}`);
         }
     </script>
+
 </body>
 </html>
