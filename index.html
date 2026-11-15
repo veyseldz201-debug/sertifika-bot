@@ -35,8 +35,8 @@
         .info-box p { margin: 0; font-size: 12px; color: var(--hint-color); line-height: 1.4; }
         .price-row { display: flex; justify-content: space-between; align-items: center; }
         .price { font-size: 17px; font-weight: 800; color: #fbbf24; }
-        .btn { background: linear-gradient(135dzeg, #3b82f6, #2563eb); background-color: #3b82f6; color: var(--button-text); border: none; padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
-        .btn-success { background: linear-gradient(135deg, #10b981, #059669); background-color: #10b981; }
+        .btn { background-color: #3b82f6; color: #ffffff; border: none; padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn-success { background-color: #10b981; }
         .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
         .badge-standart { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
         .badge-pro { background-color: rgba(16, 185, 129, 0.15); color: #34d399; }
@@ -93,13 +93,9 @@
         function odemeYap(paketAdi, yildizMiktari) {
             tg.showConfirm(`${paketAdi} için ${yildizMiktari} Telegram Yıldızı ödemek istiyor musun?`, function(confirmed) {
                 if (confirmed) {
-                    // Python botuna veriyi gönder
-                    let veri = JSON.stringify({ action: "buy_stars", package: paketAdi, stars: yildizMiktari });
-                    tg.sendData(veri);
-                    // Mini App'i kapat ve bota dön
-                    setTimeout(() => {
-                        tg.close();
-                    }, 200);
+                    // Mini App'ten çık ve bot sohbetine fatura komutu gönderilmesini sağla
+                    tg.sendData(JSON.stringify({ action: "buy_stars", package: paketAdi, stars: yildizMiktari }));
+                    tg.close();
                 }
             });
         }
