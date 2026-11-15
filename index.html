@@ -30,7 +30,7 @@
         .info-box { background: rgba(0, 0, 0, 0.25); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; border-left: 3px solid #3b82f6; }
         .price-row { display: flex; justify-content: space-between; align-items: center; }
         .price { font-size: 17px; font-weight: 800; color: #fbbf24; }
-        .btn { background-color: #3b82f6; color: #ffffff; border: none; padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn { background-color: #3b82f6; color: #ffffff; border: none; padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; text-align: center; margin-top: 10px;}
         .btn-success { background-color: #10b981; }
     </style>
 </head>
@@ -48,8 +48,8 @@
         <div class="info-box"><p>• Standart UDID Kaydı<br>• Revoke değişim süreci</p></div>
         <div class="price-row">
             <span class="price">⭐ 350 Yıldız</span>
-            <button class="btn" onclick="odemeYap('3 Aylık Sertifika', 350)">Satın Al</button>
         </div>
+        <button class="btn" onclick=" yonlendirShopier('3 Aylık Paket (350 Yıldız)')">Satın Al (Destek ile İletişim)</button>
     </div>
 
     <div class="card featured">
@@ -60,26 +60,21 @@
         <div class="info-box"><p>• Premium UDID Slotu<br>• 1 Yıl Tam Garanti</p></div>
         <div class="price-row">
             <span class="price">⭐ 625 Yıldız</span>
-            <button class="btn btn-success" onclick="odemeYap('12 Aylık Pro Sertifika', 625)">Hemen Al</button>
         </div>
+        <button class="btn btn-success" onclick="yonlendirShopier('12 Aylık Pro Paket (625 Yıldız)')">Hemen Al (Destek ile İletişim)</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        
+
         let user = tg.initDataUnsafe && tg.initDataUnsafe.user;
         if (user && user.first_name) {
             document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}!`;
         }
 
-        function odemeYap(paketAdi, yildizMiktari) {
-            tg.showConfirm(`${paketAdi} için ${yildizMiktari} Telegram Yıldızı ödemek istiyor musun?`, function(confirmed) {
-                if (confirmed) {
-                    tg.sendData(JSON.stringify({ action: "buy_stars", package: paketAdi, stars: yildizMiktari }));
-                    tg.close();
-                }
-            });
+        function yonlendirShopier(paket) {
+            window.Telegram.WebApp.openTelegramLink('https://t.me/devolepercertificate');
         }
     </script>
 </body>
