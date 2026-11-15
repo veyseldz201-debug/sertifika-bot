@@ -77,8 +77,9 @@
         }
 
         function yildizIleOde(paketAdi, yildizMiktari) {
-            // Bot tarafında fatura linki oluşturulup buraya bağlanabilir veya doğrudan bota tetikleyici atılabilir
-            tg.sendData(JSON.stringify({ action: "buy_stars", package: paketAdi, stars: yildizMiktari }));
+            // Python botuna satın alma verisini gönderir ve Mini App'i kapatır
+            let veri = JSON.stringify({ action: "buy_stars", package: paketAdi, stars: yildizMiktari });
+            tg.sendData(veri);
             tg.close();
         }
     </script>
