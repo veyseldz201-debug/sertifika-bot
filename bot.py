@@ -170,7 +170,6 @@ def answer_callback_query(cq_id):
         with urllib.request.urlopen(req): pass
     except: pass
 
-# GÜÇLENDİRİLMİŞ FATURA GÖNDERME FONKSİYONU VE LOGLAMA
 def send_invoice(chat_id, title, description, amount_stars):
     if not TOKEN: return
     prices = [{"label": title, "amount": amount_stars}]
@@ -302,25 +301,10 @@ while True:
                 send_message(ADMIN_ID, f"💰 **YENİ YILDIZ SATIŞI GERÇEKLEŞTİ!**\n\n👤 Müşteri: {s_fname} (@{s_uname})\n🆔 ID: `{s_chat_id}`\n⭐ Tutar: {total_stars} Telegram Stars")
                 continue
 
-            # 3. Mesaj ve Mini App Verisi İşleme
+            # 3. Mesaj ve Komut İşleme
             if "message" in update:
                 msg = update["message"]
                 chat_id = msg["chat"]["id"]
-                
-                # MINI APP VERİSİNİ VE FATURAYI TETİKLEYEN BLOK
-                if "web_app_data" in msg:
-                    try:
-                        w_data = json.loads(msg["web_app_data"]["data"])
-                        print("📥 Mini App Verisi Yakalandı:", w_data)
-                        if w_data.get("action") == "buy_stars":
-                            p_adi = w_data.get("package")
-                            p_yildiz = int(w_data.get("stars"))
-                            send_message(chat_id, f"⭐ **{p_adi}** için ödeme faturası oluşturuluyor...")
-                            send_invoice(chat_id, p_adi, f"{p_adi} - iOS Kurumsal Sertifika Lisansı", p_yildiz)
-                    except Exception as e:
-                        print("❌ Web App veri işleme hatası:", e)
-                    continue
-
                 text = msg.get("text", "")
                 fname = msg["chat"].get("first_name", "İsimsiz")
                 uname = msg["chat"].get("username", "Yok")
@@ -379,6 +363,18 @@ while True:
                             send_message(ADMIN_ID, f"🚨 **Yeni Kullanıcı Katıldı!**\n👤 İsim: {fname}\n🔗 @{uname}\n🆔 ID: `{chat_id}`")
 
                     args = text.split()
+                    
+                    # MINI APP'TEN GELEN ÖDEME PARAMETRESİNİ KONTROL EDİP ANINDA FATURA KESER
+                    if len(args) > 1 and args[1].startswith("odeme_"):
+                        try:
+                            y_Miktar = int(args[1].split("_")[1])
+                            p_Adi = "3 Aylık Sertifika" if y_Miktar == 350 else "12 Aylık Pro Sertifika"
+                            send_message(chat_id, f"⭐ **{p_Adi}** için Telegram Yıldız faturası hazırlanıyor...")
+                            send_invoice(chat_id, p_Adi, f"{p_Adi} - iOS Kurumsal Lisans", y_Miktar)
+                        except Exception as e:
+                            print("Ödeme başlatma hatası:", e)
+                        continue
+
                     if len(args) > 1 and args[1].isdigit():
                         did = int(args[1])
                         if did != chat_id and did in kullanici_verileri:
