@@ -170,7 +170,7 @@ def answer_callback_query(cq_id):
         with urllib.request.urlopen(req): pass
     except: pass
 
-# Telegram Yıldız (Stars) Fatura Gönderme Fonksiyonu (EKLENEN)
+# Telegram Yıldız (Stars) Fatura Gönderme Fonksiyonu
 def send_invoice(chat_id, title, description, amount_stars):
     if not TOKEN: return
     prices = [{"label": title, "amount": amount_stars}]
@@ -305,7 +305,7 @@ while True:
                 msg = update["message"]
                 chat_id = msg["chat"]["id"]
                 
-                # Mini App'ten gelen satın alma verisini yakala ve faturayı fırlat (EKLENEN KISIM)
+                # Mini App'ten gelen satın alma verisini yakala ve fatura gönder
                 if "web_app_data" in msg:
                     try:
                         w_data = json.loads(msg["web_app_data"]["data"])
@@ -369,9 +369,9 @@ while True:
                     continue
 
                 if text.startswith("/start"):
+                    # DÜZELTME BURADA: Artık admin start verdiğinde takılıp kalmıyor, normal akışa devam ediyor
                     if chat_id == ADMIN_ID:
-                        send_message(ADMIN_ID, "👑 **Admin Paneline Hoş Geldiniz!**\n\n/admin yazarak panele ulaşabilirsiniz.", main_menu)
-                        continue
+                        send_message(ADMIN_ID, "👑 **Admin Paneli için /admin yazabilirsiniz.**")
 
                     yeni_kayit = False
                     if chat_id not in kullanici_verileri:
