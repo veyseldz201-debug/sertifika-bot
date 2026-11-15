@@ -6,10 +6,14 @@
     <title>iOS Sertifika Merkezi</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: #131b2e;
-            --card-border: rgba(59, 130, 246, 0.2);
+            --card-bg: rgba(19, 27, 46, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent-blue: #3b82f6;
@@ -18,25 +22,30 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
+            background: linear-gradient(135deg, #090d16, #0d2322, #0b1329);
+            background-size: 300% 300%;
+            animation: gradientAnimation 12s ease infinite;
             color: var(--text-main);
             margin: 0;
-            padding: 20px 16px 100px 16px;
+            padding: 20px 16px 80px 16px;
             box-sizing: border-box;
+            min-height: 100vh;
         }
         .header {
             text-align: center;
-            margin-bottom: 28px;
-            padding: 15px 0;
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
-            border-radius: 16px;
-            border: 1px solid rgba(59, 130, 246, 0.15);
+            margin-bottom: 24px;
+            padding: 18px 10px;
+            background: rgba(13, 20, 35, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .header h2 {
             margin: 0 0 6px 0;
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            background: linear-gradient(90deg, #60a5fa, #34d399);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -45,25 +54,49 @@
             color: var(--text-muted);
             font-size: 13px;
         }
+        /* Bilgi ve Rehber Butonları Grid */
+        .info-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .info-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #cbd5e1;
+            padding: 12px 10px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            transition: all 0.2s;
+        }
+        .info-btn:active {
+            transform: scale(0.97);
+            background: rgba(59, 130, 246, 0.2);
+        }
         .card {
             background: var(--card-bg);
+            backdrop-filter: blur(12px);
             border-radius: 20px;
             padding: 20px;
             margin-bottom: 18px;
             border: 1px solid var(--card-border);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s ease;
         }
         .card.featured {
             border: 1px solid rgba(16, 185, 129, 0.4);
-            background: linear-gradient(145deg, #131b2e 0%, #0d2322 100%);
+            background: linear-gradient(145deg, rgba(19, 27, 46, 0.85) 0%, rgba(13, 35, 34, 0.85) 100%);
         }
         .badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 16px;
+            right: 16px;
             background: rgba(251, 191, 36, 0.15);
             color: var(--accent-gold);
             font-size: 11px;
@@ -73,28 +106,28 @@
             border: 1px solid rgba(251, 191, 36, 0.3);
         }
         .card-header h3 {
-            margin: 0 0 8px 0;
-            font-size: 19px;
+            margin: 0 0 6px 0;
+            font-size: 18px;
             font-weight: 700;
         }
         .description {
-            margin: 0 0 16px 0;
+            margin: 0 0 14px 0;
             color: var(--text-muted);
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.4;
         }
         .features-list {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 12px;
             padding: 12px 14px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             border-left: 3px solid var(--accent-blue);
         }
         .card.featured .features-list {
             border-left-color: var(--accent-green);
         }
         .features-list p {
-            margin: 4px 0;
+            margin: 5px 0;
             font-size: 12px;
             color: var(--text-muted);
         }
@@ -104,7 +137,7 @@
             align-items: center;
         }
         .price {
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 800;
             color: var(--accent-gold);
         }
@@ -112,22 +145,67 @@
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: #ffffff;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 20px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            margin-top: 12px;
             transition: opacity 0.2s;
         }
         .btn-success {
             background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
-        .btn:active {
-            opacity: 0.8;
+        .btn:active { opacity: 0.85; transform: scale(0.98); }
+        
+        /* Modal / Açılır Pencereler */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: #131b2e;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 22px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 10px;
+        }
+        .modal-header h3 { margin: 0; color: #60a5fa; font-size: 17px; }
+        .close-btn { background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; }
+        .modal-body p, .modal-body ol { font-size: 13px; color: #cbd5e1; line-height: 1.5; margin: 8px 0; }
+        .modal-body ol { padding-left: 20px; }
+        
+        .footer-sig {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(148, 163, 184, 0.5);
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -137,38 +215,85 @@
         <p id="user-greeting">Güvenli ve kesintisiz lisans çözümleri</p>
     </div>
 
+    <!-- Bilgilendirme ve UDID Rehberi Butonları -->
+    <div class="info-buttons">
+        <button class="info-btn" onclick="openModal('modal-info')">💡 Sertifika Nedir?</button>
+        <button class="info-btn" onclick="openModal('modal-udid')">📌 UDID Nasıl Alınır?</button>
+    </div>
+
+    <!-- 3 Aylık Paket -->
     <div class="card">
-        <div class="badge">Popüler</div>
+        <div class="badge">Standart</div>
         <div class="card-header">
             <h3>3 Aylık Paket</h3>
         </div>
-        <p class="description">ESign, KSign ve GBox ile tam uyumlu, stabil kurumsal sertifika.</p>
+        <p class="description">ESign, KSign ve GBox ile tam uyumlu kurumsal sertifika.</p>
         <div class="features-list">
-            <p>• Standart UDID Kaydı</p>
-            <p>• Revoke değişim süreci</p>
-            <p>• 1 Cihaz Hakkı</p>
+            <p>• <b>Kullanım Süresi:</b> 365 Gün Tam Erişim</p>
+            <p>• <b>Oluşum Süresi:</b> 24 - 72 Saat Arası</p>
+            <p>• <b>Garanti Durumu:</b> Standart Paket</p>
         </div>
         <div class="price-footer">
             <span class="price">⭐ 350 Yıldız</span>
         </div>
-        <button class="btn" style="margin-top: 14px;" onclick="yildizIleOde(350)">Telegram Yıldızı ile Satın Al</button>
+        <button class="btn" onclick="yildizIleOde(350)">Telegram Yıldızı ile Satın Al</button>
     </div>
 
+    <!-- 12 Aylık Pro Paket -->
     <div class="card featured">
         <div class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3);">VIP PRO</div>
         <div class="card-header">
             <h3>12 Aylık Pro Paket</h3>
         </div>
-        <p class="description">1 yıl boyunca en kararlı kurumsal havuzlar ve öncelikli VIP destek.</p>
+        <p class="description">1 yıl boyunca en kararlı kurumsal havuzlar ve VIP destek.</p>
         <div class="features-list">
-            <p>• Premium UDID Slotu</p>
-            <p>• 1 Yıl Tam Garanti</p>
-            <p>• Öncelikli Canlı Destek</p>
+            <p>• <b>Kullanım Süresi:</b> 365 Gün Tam Erişim</p>
+            <p>• <b>Oluşum Süresi:</b> 24 - 72 Saat Arası</p>
+            <p>• <b>Garanti Durumu:</b> Revoke Olmaz / Tam Güvence</p>
         </div>
         <div class="price-footer">
             <span class="price">⭐ 625 Yıldız</span>
         </div>
-        <button class="btn btn-success" style="margin-top: 14px;" onclick="yildizIleOde(625)">Hemen Al (625 Yıldız)</button>
+        <button class="btn btn-success" onclick="yildizIleOde(625)">Hemen Al (625 Yıldız)</button>
+    </div>
+
+    <div class="footer-sig">devolepercertificate</div>
+
+    <!-- Sertifika Bilgi Modalı -->
+    <div id="modal-info" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💡 Sertifika Nedir?</h3>
+                <button class="close-btn" onclick="closeModal('modal-info')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>iOS Sertifikası, Apple Developer Enterprise programı aracılığıyla cihazınıza bilgisayarsız ve jailbreaksiz bir şekilde imzasız IPA dosyaları kurmanızı sağlar.</p>
+                <p><b>Ne işe yarar?</b></p>
+                <p>• ESign, KSign veya GBox gibi imza araçlarıyla cihazınıza App Store dışından modlu uygulamalar, hileli oyunlar, özenle düzenlenmiş sosyal medya istemcileri (Instagram, YouTube vb.) yükleyebilirsiniz.</p>
+                <p>• Uygulamalarınız Apple tarafından silinmez veya sertifika süresince sorunsuz çalışır.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- UDID Rehber Modalı -->
+    <div id="modal-udid" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📌 UDID Nasıl Alınır?</h3>
+                <button class="close-btn" onclick="closeModal('modal-udid')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ol>
+                    <li>iPhone veya iPad’inizden Safari tarayıcısını açın.</li>
+                    <li><a href="https://get.udid.io" target="_blank" style="color: #60a5fa;">https://get.udid.io</a> adresine girin.</li>
+                    <li>Sayfadaki UDID alma talimatlarını takip edin.</li>
+                    <li><b>Get my UDID</b> butonuna basın.</li>
+                    <li>Profil inecektir. İndirdikten sonra <b>Ayarlar</b>'a girip <b>VPN ve Aygıt Yönetimi</b> bölümünden profili kurun ve siteye geri yönlendirileceksiniz.</li>
+                    <li>Oradan UDID numaranızı kopyalayıp bize gönderin.</li>
+                </ol>
+                <p style="margin-top: 12px; color: #34d399; font-weight: 600;">☑ UDID numaranız tarafımıza ulaştığında sertifika işleminiz için gerekli kontroller yapılacaktır.</p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -180,8 +305,22 @@
             document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}!`;
         }
 
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
         function yildizIleOde(yildizMiktari) {
-            // Kesin ve sorunsuz tetikleme için doğrudan bot sohbetine parametreyle yönlendirir
+            // Hiçbir veriyi havada bırakmayan, anında bota parametre ile bağlayan kusursuz akış
             const botUsername = "SertifikaMagazaBot";
             window.Telegram.WebApp.openTelegramLink(`https://t.me/${botUsername}?start=odeme_${yildizMiktari}`);
         }
