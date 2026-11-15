@@ -170,6 +170,7 @@ def answer_callback_query(cq_id):
         with urllib.request.urlopen(req): pass
     except: pass
 
+# GÜÇLENDİRİLMİŞ FATURA GÖNDERME FONKSİYONU VE LOGLAMA
 def send_invoice(chat_id, title, description, amount_stars):
     if not TOKEN: return
     prices = [{"label": title, "amount": amount_stars}]
@@ -184,9 +185,11 @@ def send_invoice(chat_id, title, description, amount_stars):
     req = urllib.request.Request(f"{BASE_URL}/sendInvoice", data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
     try:
         with urllib.request.urlopen(req) as resp:
-            return json.loads(resp.read().decode())
+            res_json = json.loads(resp.read().decode())
+            print("💰 TELEGRAM FATURA YANITI:", res_json)
+            return res_json
     except Exception as e:
-        print("Fatura gönderme hatası:", e)
+        print("❌ Fatura gönderme kritik hata:", e)
 
 def answer_pre_checkout_query(pcq_id, ok=True, error_message=""):
     if not TOKEN: return
@@ -279,13 +282,13 @@ while True:
         for update in updates:
             offset = update["update_id"] + 1
             
-            # 1. Ödeme Ön Onay İstemi (Pre-Checkout Query) Yakalama
+            # 1. Ödeme Ön Onay (Pre-Checkout Query)
             if "pre_checkout_query" in update:
                 pcq = update["pre_checkout_query"]
                 answer_pre_checkout_query(pcq["id"], ok=True)
                 continue
 
-            # 2. Başarılı Ödeme (Successful Payment) Yakalama
+            # 2. Başarılı Ödeme (Successful Payment)
             if "message" in update and "successful_payment" in update["message"]:
                 s_msg = update["message"]
                 s_chat_id = s_msg["chat"]["id"]
@@ -304,17 +307,18 @@ while True:
                 msg = update["message"]
                 chat_id = msg["chat"]["id"]
                 
-                # MINI APP'TEN GELEN SATIN ALMA VERİSİNİ BURASI YAKALAR VE FATURA ATAR
+                # MINI APP VERİSİNİ VE FATURAYI TETİKLEYEN BLOK
                 if "web_app_data" in msg:
                     try:
                         w_data = json.loads(msg["web_app_data"]["data"])
+                        print("📥 Mini App Verisi Yakalandı:", w_data)
                         if w_data.get("action") == "buy_stars":
                             p_adi = w_data.get("package")
                             p_yildiz = int(w_data.get("stars"))
                             send_message(chat_id, f"⭐ **{p_adi}** için ödeme faturası oluşturuluyor...")
                             send_invoice(chat_id, p_adi, f"{p_adi} - iOS Kurumsal Sertifika Lisansı", p_yildiz)
                     except Exception as e:
-                        print("Web App veri işleme hatası:", e)
+                        print("❌ Web App veri işleme hatası:", e)
                     continue
 
                 text = msg.get("text", "")
