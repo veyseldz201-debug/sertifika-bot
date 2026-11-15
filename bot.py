@@ -369,16 +369,12 @@ while True:
                     continue
 
                 if text.startswith("/start"):
-                    # DÜZELTME BURADA: Artık admin start verdiğinde takılıp kalmıyor, normal akışa devam ediyor
-                    if chat_id == ADMIN_ID:
-                        send_message(ADMIN_ID, "👑 **Admin Paneli için /admin yazabilirsiniz.**")
-
-                    yeni_kayit = False
+                    # DÜZELTME: Artık sen (Admin) /start verdiğinde de bot takılmıyor, normal akışa devam ediyor
                     if chat_id not in kullanici_verileri:
                         kullanici_verileri[chat_id] = {"referrals": 1, "username": uname, "first_name": fname, "davet_eden": None, "davet_onaylandi": False}
-                        yeni_kayit = True
                         verileri_kaydet()
-                        send_message(ADMIN_ID, f"🚨 **Yeni Kullanıcı Katıldı!**\n👤 İsim: {fname}\n🔗 @{uname}\n🆔 ID: `{chat_id}`")
+                        if chat_id != ADMIN_ID:
+                            send_message(ADMIN_ID, f"🚨 **Yeni Kullanıcı Katıldı!**\n👤 İsim: {fname}\n🔗 @{uname}\n🆔 ID: `{chat_id}`")
 
                     args = text.split()
                     if len(args) > 1 and args[1].isdigit():
@@ -406,8 +402,7 @@ while True:
                         }
                         send_message(chat_id, f"⚠️ **Eksik Abonelik:**\nŞu kanallardan ayrıldığınız tespit edildi: `{' , '.join(eksik_kanallar)}`.", sub_kb)
                     else:
-                        karsilama = "🎉 **iOS Sertifika Botuna Hoşgeldiniz!**\n\nHesabınıza **+1 Hediye Referans Puanı** tanımlandı! 🎁" if yeni_kayit else "✨ **iOS Sertifika Botuna Hoşgeldiniz!**"
-                        send_message(chat_id, karsilama, main_menu)
+                        send_message(chat_id, "✨ **iOS Sertifika Mağazasına Hoş Geldiniz!**", main_menu)
 
             if "callback_query" in update:
                 cq = update["callback_query"]
@@ -541,7 +536,7 @@ while True:
                         "ai_guven": "🛡 %100 güvenlidir, şifre istenmez.",
                         "ai_sure": "⏳ İşlemler hızlıca tamamlanır.",
                         "ai_revoke": "🔄 VIP paketlerde değişim garantisi vardır.",
-                        "ai_sign": "⚡ E-Sign veya GBox ile kurabilirsiniz."
+                        "ai_sign": "⚡ E-Sign veya GBox kurabilirsiniz."
                     }
                     edit_message(chat_id, mid, cevaplar[data], ai_kb)
     except Exception as e:
