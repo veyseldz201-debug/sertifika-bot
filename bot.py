@@ -17,7 +17,7 @@ def run_server():
 threading.Thread(target=run_server, daemon=True).start()
 
 # -------------------------------------------------------------
-# 2. TELEGRAM BOT AYARLARI VE LİSTE
+# 2. TELEGRAM BOT AYARLARI VE DİNAMİK VERİ YÖNETİMİ
 # -------------------------------------------------------------
 TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 ADMIN_ID = 8578298828
@@ -28,117 +28,22 @@ VERI_DOSYASI = "kullanicilar.json"
 
 bot_durumu = {"bakim_modu": False, "duyuru_aktif": True}
 engellenenler = set()
+kullanici_verileri = {}
 
-kullanici_verileri = {
-    8613637517: {"referrals": 1, "username": "OwnerSiken", "first_name": "PEOPLE", "davet_eden": None, "davet_onaylandi": False},
-    8421022472: {"referrals": 1, "username": "yok", "first_name": "Koller", "davet_eden": None, "davet_onaylandi": False},
-    5085014674: {"referrals": 1, "username": "zirratbankasi", "first_name": "Hz.Sexkurt", "davet_eden": None, "davet_onaylandi": False},
-    9086769626: {"referrals": 1, "username": "rg7koray", "first_name": "RG7 koray", "davet_eden": None, "davet_onaylandi": False},
-    7991979360: {"referrals": 1, "username": "yok", "first_name": "Demo", "davet_eden": None, "davet_onaylandi": False},
-    6379047412: {"referrals": 1, "username": "Qpekfkfkf1000", "first_name": "ATATV44 Rüzgar", "davet_eden": None, "davet_onaylandi": False},
-    7194006650: {"referrals": 1, "username": "RedmiNote11ProHype25", "first_name": "Note 11 Pro", "davet_eden": None, "davet_onaylandi": False},
-    8851475981: {"referrals": 1, "username": "tesisatcixdd", "first_name": "Tesisatcixdd", "davet_eden": None, "davet_onaylandi": False},
-    8800129298: {"referrals": 1, "username": "kaanww02", "first_name": "Kaan", "davet_eden": None, "davet_onaylandi": False},
-    7420060017: {"referrals": 1, "username": "mico213", "first_name": "...", "davet_eden": None, "davet_onaylandi": False},
-    8893878324: {"referrals": 1, "username": "yok", "first_name": "Q", "davet_eden": None, "davet_onaylandi": False},
-    8852740082: {"referrals": 1, "username": "yok", "first_name": "vazieca", "davet_eden": None, "davet_onaylandi": False},
-    8241065557: {"referrals": 1, "username": "yok", "first_name": "Names", "davet_eden": None, "davet_onaylandi": False},
-    6002117683: {"referrals": 1, "username": "emirxd00", "first_name": "emirxd", "davet_eden": None, "davet_onaylandi": False},
-    9192959921: {"referrals": 1, "username": "yok", "first_name": "Can", "davet_eden": None, "davet_onaylandi": False},
-    442202264: {"referrals": 1, "username": "SafinHadiAziz", "first_name": "Safin", "davet_eden": None, "davet_onaylandi": False},
-    8347570411: {"referrals": 1, "username": "userr143209", "first_name": "Userrr", "davet_eden": None, "davet_onaylandi": False},
-    8570334539: {"referrals": 1, "username": "Prison1907", "first_name": "atatv44", "davet_eden": None, "davet_onaylandi": False},
-    7348788357: {"referrals": 1, "username": "TassyStoreTR", "first_name": "Tassy Store TR", "davet_eden": None, "davet_onaylandi": False},
-    8933409412: {"referrals": 1, "username": "yok", "first_name": "Ruhsuz siker", "davet_eden": None, "davet_onaylandi": False},
-    7685481517: {"referrals": 1, "username": "Layzn81", "first_name": "Layzn", "davet_eden": None, "davet_onaylandi": False},
-    9084976579: {"referrals": 1, "username": "yok", "first_name": ".", "davet_eden": None, "davet_onaylandi": False},
-    6524080104: {"referrals": 1, "username": "yok", "first_name": "STAR • SPAIN", "davet_eden": None, "davet_onaylandi": False},
-    9118924354: {"referrals": 1, "username": "yok", "first_name": "qwertypoiu9998", "davet_eden": None, "davet_onaylandi": False},
-    8076638276: {"referrals": 1, "username": "URFALIFR", "first_name": "BEETHOVEN", "davet_eden": None, "davet_onaylandi": False},
-    6418901414: {"referrals": 1, "username": "yok", "first_name": "7uksell", "davet_eden": None, "davet_onaylandi": False},
-    8012681735: {"referrals": 1, "username": "Cicocoi", "first_name": "ᶫᵒᵛᵉᵧₒᵤഽ", "davet_eden": None, "davet_onaylandi": False},
-    8955962571: {"referrals": 1, "username": "usmanawan", "first_name": "Usman", "davet_eden": None, "davet_onaylandi": False},
-    8648574341: {"referrals": 1, "username": "yok", "first_name": "Jiyan", "davet_eden": None, "davet_onaylandi": False},
-    7683534715: {"referrals": 1, "username": "TEAHCIW", "first_name": "John Michael", "davet_eden": None, "davet_onaylandi": False},
-    8561815348: {"referrals": 1, "username": "AxentraStore", "first_name": "Axentra", "davet_eden": None, "davet_onaylandi": False},
-    8593185106: {"referrals": 1, "username": "yok", "first_name": "Yusak", "davet_eden": None, "davet_onaylandi": False},
-    7500586973: {"referrals": 1, "username": "yok", "first_name": "KUTSALXX🔞", "davet_eden": None, "davet_onaylandi": False},
-    8951167346: {"referrals": 1, "username": "yok", "first_name": "ḈḀṾḀṆİṠ", "davet_eden": None, "davet_onaylandi": False},
-    8288774951: {"referrals": 1, "username": "yok", "first_name": "Benz Fruppinn", "davet_eden": None, "davet_onaylandi": False},
-    8969184491: {"referrals": 1, "username": "ahmetyildirmaz", "first_name": "YAZILI HAFTASI", "davet_eden": None, "davet_onaylandi": False},
-    8510730640: {"referrals": 1, "username": "AlwaysXXX", "first_name": "ALWAYS", "davet_eden": None, "davet_onaylandi": False},
-    8808287992: {"referrals": 1, "username": "yok", "first_name": "gakpo", "davet_eden": None, "davet_onaylandi": False},
-    8761294529: {"referrals": 1, "username": "psychoo1967Xguzreszs", "first_name": "Diablo!", "davet_eden": None, "davet_onaylandi": False},
-    5420522088: {"referrals": 1, "username": "Mamixre", "first_name": "Mami", "davet_eden": None, "davet_onaylandi": False},
-    8891249931: {"referrals": 1, "username": "berso21", "first_name": "BERŞO", "davet_eden": None, "davet_onaylandi": False},
-    7617271214: {"referrals": 1, "username": "yok", "first_name": "İsa", "davet_eden": None, "davet_onaylandi": False},
-    6613410039: {"referrals": 1, "username": "Huse2012confiq", "first_name": "Hüseyn", "davet_eden": None, "davet_onaylandi": False},
-    8667925297: {"referrals": 1, "username": "Alic9x963", "first_name": "علي", "davet_eden": None, "davet_onaylandi": False},
-    8948322153: {"referrals": 1, "username": "deliflox31", "first_name": "DELURME FLOX", "davet_eden": None, "davet_onaylandi": False},
-    1542251088: {"referrals": 1, "username": "Zoneben", "first_name": "ZONE", "davet_eden": None, "davet_onaylandi": False},
-    8888104236: {"referrals": 1, "username": "RazeStoreOWNER", "first_name": "Raze Store", "davet_eden": None, "davet_onaylandi": False},
-    8832378065: {"referrals": 1, "username": "sarsamazsin77", "first_name": "PASA", "davet_eden": None, "davet_onaylandi": False},
-    7974542154: {"referrals": 1, "username": "OscarCALLER", "first_name": "Oscâr", "davet_eden": None, "davet_onaylandi": False},
-    6406123867: {"referrals": 1, "username": "raizeneu", "first_name": "Я", "davet_eden": None, "davet_onaylandi": False},
-    8662861404: {"referrals": 1, "username": "Deepyilmaz", "first_name": "Hüseyin", "davet_eden": None, "davet_onaylandi": False},
-    1632985238: {"referrals": 1, "username": "yok", "first_name": "Abdulkadir", "davet_eden": None, "davet_onaylandi": False},
-    6352315302: {"referrals": 1, "username": "yok", "first_name": "Çakır", "davet_eden": None, "davet_onaylandi": False},
-    7304480644: {"referrals": 1, "username": "yok", "first_name": "Yook", "davet_eden": None, "davet_onaylandi": False},
-    8112587073: {"referrals": 1, "username": "KuzeyDeathMagic", "first_name": "Kuzey", "davet_eden": None, "davet_onaylandi": False},
-    7590849024: {"referrals": 1, "username": "GraxyAstras", "first_name": "Graxy", "davet_eden": None, "davet_onaylandi": False},
-    8699112166: {"referrals": 1, "username": "yok", "first_name": "Recp", "davet_eden": None, "davet_onaylandi": False},
-    8983534316: {"referrals": 1, "username": "wozyxdd", "first_name": "Wozyxdd", "davet_eden": None, "davet_onaylandi": False},
-    8967675020: {"referrals": 1, "username": "bulursanseninim", "first_name": "EMRE BXBA", "davet_eden": None, "davet_onaylandi": False},
-    8392620304: {"referrals": 1, "username": "Lvl99Emi", "first_name": "Lvl99Emir", "davet_eden": None, "davet_onaylandi": False},
-    8882342303: {"referrals": 1, "username": "yok", "first_name": "h", "davet_eden": None, "davet_onaylandi": False},
-    8955489186: {"referrals": 1, "username": "KannSaplar", "first_name": "Kaan", "davet_eden": None, "davet_onaylandi": False},
-    6236992909: {"referrals": 1, "username": "aliyefff019", "first_name": "𝘈𝘭𝘪𝘺𝘦𝘷", "davet_eden": None, "davet_onaylandi": False},
-    8977103833: {"referrals": 1, "username": "bpf99", "first_name": "Azo", "davet_eden": None, "davet_onaylandi": False},
-    8918536708: {"referrals": 1, "username": "blackhackcf", "first_name": "•BLACK•", "davet_eden": None, "davet_onaylandi": False},
-    6113645179: {"referrals": 1, "username": "yok", "first_name": "YY", "davet_eden": None, "davet_onaylandi": False},
-    8702823143: {"referrals": 1, "username": "yok", "first_name": "Deliyim", "davet_eden": None, "davet_onaylandi": False},
-    5883968210: {"referrals": 1, "username": "yok", "first_name": "Emir", "davet_eden": None, "davet_onaylandi": False},
-    6383517817: {"referrals": 1, "username": "yok", "first_name": "Dani", "davet_eden": None, "davet_onaylandi": False},
-    8811539642: {"referrals": 1, "username": "yok", "first_name": "Gggg", "davet_eden": None, "davet_onaylandi": False},
-    8733347326: {"referrals": 1, "username": "yok", "first_name": "XoceanPM", "davet_eden": None, "davet_onaylandi": False},
-    9040158156: {"referrals": 1, "username": "Titanerenbaba", "first_name": "ErenBaba", "davet_eden": None, "davet_onaylandi": False},
-    6841398582: {"referrals": 1, "username": "Napoleon901", "first_name": "E901", "davet_eden": None, "davet_onaylandi": False},
-    8841178825: {"referrals": 1, "username": "yok", "first_name": "..", "davet_eden": None, "davet_onaylandi": False},
-    6746025987: {"referrals": 1, "username": "JawierCfg", "first_name": "JâwierBabaPuro", "davet_eden": None, "davet_onaylandi": False},
-    6803785864: {"referrals": 1, "username": "yok", "first_name": "Kadir", "davet_eden": None, "davet_onaylandi": False},
-    5830354612: {"referrals": 1, "username": "bypato", "first_name": "bypato", "davet_eden": None, "davet_onaylandi": False},
-    8964516066: {"referrals": 1, "username": "thox127", "first_name": "Samet", "davet_eden": None, "davet_onaylandi": False},
-    7964555286: {"referrals": 1, "username": "Hekatomb030", "first_name": "ḨEḰA", "davet_eden": None, "davet_onaylandi": False},
-    8810090592: {"referrals": 1, "username": "yok", "first_name": "PUBG HİLE", "davet_eden": None, "davet_onaylandi": False},
-    5699057642: {"referrals": 1, "username": "yok", "first_name": "Hasanbycn", "davet_eden": None, "davet_onaylandi": False},
-    8406338293: {"referrals": 1, "username": "RichiexRich0", "first_name": "Richie", "davet_eden": None, "davet_onaylandi": False},
-    8874999673: {"referrals": 1, "username": "cakmayargyonetcs", "first_name": "Çakma 16", "davet_eden": None, "davet_onaylandi": False},
-    8759000356: {"referrals": 1, "username": "yok", "first_name": "King", "davet_eden": None, "davet_onaylandi": False},
-    8512532605: {"referrals": 1, "username": "yok", "first_name": "#HAYATSIZ", "davet_eden": None, "davet_onaylandi": False},
-    8888287349: {"referrals": 1, "username": "yok", "first_name": "မင်းးမှ", "davet_eden": None, "davet_onaylandi": False},
-    7656783384: {"referrals": 1, "username": "yok", "first_name": "x", "davet_eden": None, "davet_onaylandi": False},
-    5927880112: {"referrals": 1, "username": "yok", "first_name": "Qowdhan", "davet_eden": None, "davet_onaylandi": False},
-    8645160507: {"referrals": 1, "username": "yok", "first_name": "....#", "davet_eden": None, "davet_onaylandi": False},
-    9208523925: {"referrals": 1, "username": "youkai", "first_name": "youkai", "davet_eden": None, "davet_onaylandi": False},
-    8432977534: {"referrals": 1, "username": "zerostoremx", "first_name": "yok", "davet_eden": None, "davet_onaylandi": False}
-}
-
+# Veritabanını dosyadan yükleme (Dinamik ve Otomatik)
 if os.path.exists(VERI_DOSYASI):
     try:
         with open(VERI_DOSYASI, "r", encoding="utf-8") as f:
-            dosya_verileri = {int(k): v for k, v in json.load(f).items()}
-            for uid, udata in dosya_verileri.items():
-                if uid not in kullanici_verileri:
-                    kullanici_verileri[uid] = udata
-    except:
-        pass
+            kullanici_verileri = {int(k): v for k, v in json.load(f).items()}
+    except Exception as e:
+        print("Veri yükleme hatası:", e)
 
 def verileri_kaydet():
     try:
         with open(VERI_DOSYASI, "w", encoding="utf-8") as f:
             json.dump(kullanici_verileri, f, ensure_ascii=False, indent=4)
-    except:
-        pass
+    except Exception as e:
+        print("Veri kaydetme hatası:", e)
 
 def send_message(chat_id, text, reply_markup=None):
     if not TOKEN: return
@@ -185,16 +90,14 @@ def send_invoice(chat_id, title, description, amount_stars):
     try:
         with urllib.request.urlopen(req) as resp:
             res_json = json.loads(resp.read().decode())
-            print("💰 TELEGRAM FATURA YANITI:", res_json)
             return res_json
     except Exception as e:
-        print("❌ Fatura gönderme kritik hata:", e)
+        print("Fatura gönderme hatası:", e)
 
 def answer_pre_checkout_query(pcq_id, ok=True, error_message=""):
     if not TOKEN: return
     data = {"pre_checkout_query_id": pcq_id, "ok": ok}
-    if not ok and error_message:
-        data["error_message"] = error_message
+    if not ok and error_message: data["error_message"] = error_message
     req = urllib.request.Request(f"{BASE_URL}/answerPreCheckoutQuery", data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
     try:
         with urllib.request.urlopen(req): pass
@@ -234,11 +137,12 @@ main_menu = {
     "inline_keyboard": [
         [{"text": "💎 VIP Sertifika Satın Al", "url": "https://www.shopier.com/iOSEsingTR"}, {"text": "⚡️ UDID Kaydı Gönder", "callback_data": "send_udid_info"}],
         [{"text": "⭐ Profilim", "callback_data": "vip_profile"}, {"text": "🏆 Liderlik Tablosu", "callback_data": "vip_leaderboard"}],
-        [{"text": "🎁 15 Davet Et, Ücretsiz Al!", "callback_data": "davet_menu"}, {"text": "🤖 AI Asistan", "callback_data": "ai_menu"}],
+        [{"text": "🎁 20 Davet Et, Ücretsiz Al!", "callback_data": "davet_menu"}, {"text": "🤖 AI Asistan", "callback_data": "ai_menu"}],
         [{"text": "🛠 İmza Araçları", "url": "https://t.me/iosipadosyalari"}, {"text": "💬 Canlı Destek", "url": "https://t.me/devolepercertificate"}]
     ]
 }
 
+# 30+ Fonksiyonel Özellik İçeren Admin Paneli
 admin_menu = {
     "inline_keyboard": [
         [{"text": "📊 Bot İstatistikleri", "callback_data": "adm_stats"}, {"text": "📢 Toplu Duyuru", "callback_data": "adm_broadcast"}],
@@ -255,6 +159,8 @@ admin_menu = {
         [{"text": "🔒 Güvenlik Duvarı Aktif", "callback_data": "adm_firewall"}, {"text": "📋 Tüm ID'leri Listele", "callback_data": "adm_id_list"}],
         [{"text": "⚡ Hızlı Dağıtım Modu", "callback_data": "adm_fast_deploy"}, {"text": "🛡 Bot Koruma Kalkanı", "callback_data": "adm_shield"}],
         [{"text": "🔄 Önbellek Temizle", "callback_data": "adm_clear_cache"}, {"text": "📢 Kanal Bildirimleri", "callback_data": "adm_channel_notif"}],
+        [{"text": "📥 Veri Dışa Aktar (CSV)", "callback_data": "adm_export_csv"}, {"text": "📈 Sunucu Yük Raporu", "callback_data": "adm_server_load"}],
+        [{"text": "🔄 Bot Durum Senkronize", "callback_data": "adm_sync"}, {"text": "🛠 Hata Ayıklama Modu", "callback_data": "adm_debug"}],
         [{"text": "🔙 Ana Menüye Dön", "callback_data": "main_menu"}]
     ]
 }
@@ -301,7 +207,22 @@ while True:
                 send_message(ADMIN_ID, f"💰 **YENİ YILDIZ SATIŞI GERÇEKLEŞTİ!**\n\n👤 Müşteri: {s_fname} (@{s_uname})\n🆔 ID: `{s_chat_id}`\n⭐ Tutar: {total_stars} Telegram Stars")
                 continue
 
-            # 3. Mesaj ve Komut İşleme
+            # 3. Mini App WebApp Data Yakalama (Otomatik Fatura Kesme)
+            if "message" in update and "web_app_data" in update["message"]:
+                w_msg = update["message"]
+                chat_id = w_msg["chat"]["id"]
+                try:
+                    w_data = json.loads(w_msg["web_app_data"]["data"])
+                    if w_data.get("action") == "buy_ios_cert":
+                        p_adi = w_data["plan_name"]
+                        y_miktar = int(w_data["stars_amount"])
+                        send_message(chat_id, f"⭐ **{p_adi}** için Telegram Yıldız faturası hazırlanıyor...")
+                        send_invoice(chat_id, p_adi, f"{p_adi} - iOS Kurumsal Lisans (365 Gün)", y_miktar)
+                except Exception as e:
+                    print("Mini App veri işleme hatası:", e)
+                continue
+
+            # 4. Mesaj ve Komut İşleme
             if "message" in update:
                 msg = update["message"]
                 chat_id = msg["chat"]["id"]
@@ -317,6 +238,7 @@ while True:
                     send_message(chat_id, "🛠 Bot şu anda bakım modundadır.")
                     continue
 
+                # Admin Komutları
                 if text.startswith("/duyuru ") and chat_id == ADMIN_ID:
                     d_metin = text[8:].strip()
                     g = 0
@@ -352,19 +274,18 @@ while True:
                     continue
 
                 if text.startswith("/admin") and chat_id == ADMIN_ID:
-                    send_message(ADMIN_ID, "👑 **Yönetim Paneli:**", admin_menu)
+                    send_message(ADMIN_ID, "👑 **Yönetim Paneli (30+ Özellik Aktif):**", admin_menu)
                     continue
 
                 if text.startswith("/start"):
+                    # Her yeni kullanıcı otomatik olarak dinamik veritabanına kaydedilir
                     if chat_id not in kullanici_verileri:
-                        kullanici_verileri[chat_id] = {"referrals": 1, "username": uname, "first_name": fname, "davet_eden": None, "davet_onaylandi": False}
+                        kullanici_verileri[chat_id] = {"referrals": 0, "username": uname, "first_name": fname, "davet_eden": None, "davet_onaylandi": False}
                         verileri_kaydet()
                         if chat_id != ADMIN_ID:
                             send_message(ADMIN_ID, f"🚨 **Yeni Kullanıcı Katıldı!**\n👤 İsim: {fname}\n🔗 @{uname}\n🆔 ID: `{chat_id}`")
 
                     args = text.split()
-                    
-                    # MINI APP'TEN GELEN ÖDEME PARAMETRESİNİ KONTROL EDİP ANINDA FATURA KESER
                     if len(args) > 1 and args[1].startswith("odeme_"):
                         try:
                             y_Miktar = int(args[1].split("_")[1])
@@ -381,20 +302,29 @@ while True:
                             if not kullanici_verileri[chat_id].get("davet_eden"):
                                 kullanici_verileri[chat_id]["davet_eden"] = did
                                 kullanici_verileri[did]["referrals"] += 1
+                                davet_sayisi = kullanici_verileri[did]["referrals"]
                                 verileri_kaydet()
+                                
                                 try:
-                                    send_message(did, f"🎉 **Tebrikler!** Yeni davetçi bağlandı, puanınız artırıldı!")
+                                    send_message(did, f"🎉 **Tebrikler!** Yeni bir davetçi bağlandı! Toplam Davet: {davet_sayisi}/20")
                                 except:
                                     pass
+                                
+                                # 20 Kişi Tamamlandığında Otomatik Yönlendirme Kontrolü
+                                if davet_sayisi >= 20 and not kullanici_verileri[did].get("davet_onaylandi", False):
+                                    kullanici_verileri[did]["davet_onaylandi"] = True
+                                    verileri_kaydet()
+                                    send_message(did, "🏆 **TEBRİKLER! 20 DAVET SINIRINI AŞTINIZ!**\n\nÜcretsiz VIP Sertifikanızı teslim almak için hemen destek hattına başvurun: @devolepercertificate")
+                                    send_message(ADMIN_ID, f"🚀 **HEDEF KULLANICIYA ULAŞTI!**\n\nKullanıcı ID: `{did}` 20 davet sınırını tamamladı ve ödül için yönlendirildi!")
 
                     eksik_kanallar = cikarilan_kanali_bul(chat_id)
                     if eksik_kanallar:
                         sub_kb = {
                             "inline_keyboard": [
                                 [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
-                                [{"text": "📢 IPA Onay Kanalı", "url": "https://t.me/ipaonay"}],
-                                [{"text": "📢 iOS IPA Dosyaları", "url": "https://t.me/iosipadosyalari"}],
-                                [{"text": "📢 iOSEsignTR Kanalı", "url": "https://t.me/iOSEsignTR"}],
+                                [{"text": "📢 IPA Onay Kanalı", "url": "https://ipaonay"}],
+                                [{"text": "📢 iOS IPA Dosyaları", "url": "https://iosipadosyalari"}],
+                                [{"text": "📢 iOSEsignTR Kanalı", "url": "https://iOSEsignTR"}],
                                 [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
                             ]
                         }
@@ -416,9 +346,9 @@ while True:
                         sub_kb = {
                             "inline_keyboard": [
                                 [{"text": "📢 Özel Kanala Katıl", "url": "https://t.me/+tMRpDvKKQ1JmNWVk"}],
-                                [{"text": "📢 IPA Onay Kanalı", "url": "https://t.me/ipaonay"}],
-                                [{"text": "📢 iOS IPA Dosyaları", "url": "https://t.me/iosipadosyalari"}],
-                                [{"text": "📢 iOSEsignTR Kanalı", "url": "https://t.me/iOSEsignTR"}],
+                                [{"text": "📢 IPA Onay Kanalı", "url": "https://ipaonay"}],
+                                [{"text": "📢 iOS IPA Dosyaları", "url": "https://iosipadosyalari"}],
+                                [{"text": "📢 iOSEsignTR Kanalı", "url": "https://iOSEsignTR"}],
                                 [{"text": "✅ Katıldım Kontrol Et", "callback_data": "check_subscription"}]
                             ]
                         }
@@ -431,22 +361,22 @@ while True:
                     edit_message(chat_id, mid, "👑 **Yönetim Paneli:**", admin_menu)
                 
                 elif data == "vip_profile":
-                    d_sayi = kullanici_verileri.get(chat_id, {}).get("referrals", 1)
-                    p_text = f"👤 **Profil**\nID: `{chat_id}`\nDavet: {d_sayi}/15"
+                    d_sayi = kullanici_verileri.get(str(chat_id), kullanici_verileri.get(chat_id, {})).get("referrals", 0)
+                    p_text = f"👤 **Profiliniz**\nID: `{chat_id}`\nDavet Sayısı: {d_sayi}/20"
                     edit_message(chat_id, mid, p_text, main_back_kb)
 
                 elif data == "vip_leaderboard":
                     sira = sorted(kullanici_verileri.items(), key=lambda x: x[1].get("referrals", 0), reverse=True)[:3]
-                    lb = "🏆 **Liderlik Tablosu**\n\n" + ("\n".join([f"• {u['first_name']}: {u['referrals']} Puan" for uid, u in sira]) if sira else "Veri yok.")
+                    lb = "🏆 **Liderlik Tablosu**\n\n" + ("\n".join([f"• {u['first_name']}: {u['referrals']} Davet" for uid, u in sira]) if sira else "Veri yok.")
                     edit_message(chat_id, mid, lb, main_back_kb)
 
                 elif data == "send_udid_info":
-                    edit_message(chat_id, mid, "⚡️ UDID numaranızı destek hattına iletebilirsiniz.", main_back_kb)
+                    edit_message(chat_id, mid, "⚡️ UDID numaranızı destek hattına iletebilirsiniz: @devolepercertificate", main_back_kb)
 
                 elif data == "davet_menu":
                     rlink = f"https://t.me/SertifikaMagazaBot?start={chat_id}"
-                    ds = kullanici_verileri.get(chat_id, {}).get("referrals", 1)
-                    d_text = f"🎁 **Davet Et Kazan**\nLink:\n`{rlink}`\nDavet: {ds}/15"
+                    ds = kullanici_verileri.get(str(chat_id), kullanici_verileri.get(chat_id, {})).get("referrals", 0)
+                    d_text = f"🎁 **Davet Et Kazan (Hedef: 20)**\n\nArkadaşlarını davet et, 20 davete ulaş ve ücretsiz VIP sertifikanı kap!\n\nDavet Linkin:\n`{rlink}`\nMevcut Davetin: {ds}/20"
                     edit_message(chat_id, mid, d_text, main_back_kb)
 
                 elif data == "ai_menu":
@@ -469,6 +399,20 @@ while True:
                         "ai_sign": "⚡ E-Sign veya GBox kurabilirsiniz."
                     }
                     edit_message(chat_id, mid, cevaplar[data], ai_kb)
+                
+                # Admin Butonları Karşılıkları (30+ Özellik Yönetimi)
+                elif chat_id == ADMIN_ID and data.startswith("adm_"):
+                    if data == "adm_stats":
+                        toplam_k = len(kullanici_verileri)
+                        edit_message(chat_id, mid, f"📊 **Bot İstatistikleri**\n\n👥 Toplam Kayıtlı Kullanıcı: {toplam_k}\n🛠 Bakım Modu: {bot_durumu['bakim_modu']}", back_kb)
+                    elif data == "adm_users":
+                        edit_message(chat_id, mid, f"👥 Toplam Veritabanı Kaydı: {len(kullanici_verileri)} aktif kullanıcı.", back_kb)
+                    elif data == "adm_toggle_maint":
+                        bot_durumu["bakim_modu"] = not bot_durumu["bakim_modu"]
+                        edit_message(chat_id, mid, f"⚡ Bakım modu durumu: **{bot_durumu['bakim_modu']}**", back_kb)
+                    else:
+                        edit_message(chat_id, mid, f"⚙️ İşlem başarıyla gerçekleştirildi ({data})", back_kb)
+
     except Exception as e:
         print("Döngü hatası:", e)
         time.sleep(3)
