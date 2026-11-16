@@ -2,421 +2,655 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOSEsignTR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>iOS Sertifika VIP Mağazası</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
         :root {
-            --card-bg: rgba(19, 27, 46, 0.75);
-            --card-border: rgba(255, 255, 255, 0.08);
+            --bg-dark: #05070c;
+            --surface: rgba(17, 22, 34, 0.78);
+            --surface-hover: rgba(24, 31, 48, 0.92);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --gold: #f59e0b;
+            --gold-light: #fbbf24;
+            --gold-glow: rgba(245, 158, 11, 0.25);
+            --sapphire: #3b82f6;
+            --sapphire-glow: rgba(59, 130, 246, 0.28);
+            --emerald: #10b981;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --accent-blue: #3b82f6;
-            --accent-green: #10b981;
-            --accent-gold: #fbbf24;
-            --accent-red: #ef4444;
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #090d16, #0d2322, #0b1329);
-            background-size: 300% 300%;
-            animation: gradientAnimation 12s ease infinite;
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px 16px 80px 16px;
+
+        * {
             box-sizing: border-box;
-            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 0%, rgba(59, 130, 246, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 90% 25%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 14px 16px 105px 16px;
+            overflow-x: hidden;
+        }
+
+        /* Üst Kullanıcı & Canlı Durum Çubuğu */
+        .top-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(12px);
+        }
+
+        .user-greeting {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--emerald);
+            background: rgba(16, 185, 129, 0.12);
+            padding: 4px 9px;
+            border-radius: 20px;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            background-color: var(--emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--emerald);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.25); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+
+        /* Başlık Alanı */
         .header {
             text-align: center;
-            margin-bottom: 20px;
-            padding: 18px 10px;
-            background: rgba(13, 20, 35, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 18px;
         }
-        .header h2 {
-            margin: 0 0 6px 0;
-            font-size: 26px;
+
+        .ios-universal-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(59, 130, 246, 0.18));
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            color: var(--gold-light);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .header h1 {
+            font-size: 25px;
             font-weight: 800;
-            background: linear-gradient(90deg, #60a5fa, #34d399);
+            letter-spacing: -0.6px;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
         }
+
         .header p {
-            margin: 0;
-            color: var(--text-muted);
             font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.45;
+            max-width: 340px;
+            margin: 0 auto;
         }
-        /* 24 Saatlik Gerçek Zamanlı Ortak Sayaç Banneri */
-        .discount-banner {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(251, 191, 36, 0.2));
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            border-radius: 16px;
-            padding: 12px;
-            text-align: center;
+
+        /* Ortak Özellikler Özeti */
+        .info-banner {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.22);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-banner-icon {
+            font-size: 18px;
+            line-height: 1.2;
+        }
+
+        .info-banner-text {
+            font-size: 12px;
+            color: #cbd5e1;
+            line-height: 1.45;
+        }
+
+        .info-banner-text strong {
+            color: #ffffff;
+        }
+
+        /* Paket Kartları */
+        .plans {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
             margin-bottom: 20px;
-            backdrop-filter: blur(8px);
         }
-        .discount-banner h4 {
-            margin: 0 0 4px 0;
-            color: #f87171;
-            font-size: 14px;
+
+        .plan-card {
+            position: relative;
+            background: var(--surface);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 18px;
+            backdrop-filter: blur(16px);
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+        }
+
+        .plan-card.selected {
+            border-color: var(--sapphire);
+            background: var(--surface-hover);
+            box-shadow: 0 8px 28px var(--sapphire-glow);
+            transform: translateY(-2px);
+        }
+
+        .plan-card.vip-gold {
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+
+        .plan-card.vip-gold.selected {
+            border-color: var(--gold);
+            box-shadow: 0 8px 30px var(--gold-glow);
+        }
+
+        .vip-ribbon {
+            position: absolute;
+            top: -11px;
+            right: 16px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #05070c;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 11px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .plan-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .plan-card.selected .radio-circle {
+            border-color: var(--sapphire);
+            background: var(--sapphire);
+        }
+
+        .plan-card.vip-gold.selected .radio-circle {
+            border-color: var(--gold);
+            background: var(--gold);
+        }
+
+        .radio-circle::after {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .plan-card.selected .radio-circle::after {
+            opacity: 1;
+        }
+
+        .plan-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .plan-sub {
+            font-size: 12px;
+            color: var(--emerald);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .price-box {
+            text-align: right;
+        }
+
+        .price-stars {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+        }
+
+        .price-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .features {
+            list-style: none;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .features li {
+            font-size: 13px;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .features li .check {
+            color: var(--emerald);
+            font-weight: 800;
+        }
+
+        .features li.highlight-warranty {
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        /* Ödeme Yöntemi */
+        .section-title {
+            font-size: 13px;
             font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .countdown {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--accent-gold);
-            font-variant-numeric: tabular-nums;
-        }
-        /* Bilgi ve Rehber Butonları Grid */
-        .info-buttons {
+
+        .pay-methods {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 20px;
-        }
-        .info-btn {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #cbd5e1;
-            padding: 12px 10px;
-            border-radius: 14px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            backdrop-filter: blur(5px);
-            transition: all 0.2s;
-        }
-        .info-btn:active {
-            transform: scale(0.97);
-            background: rgba(59, 130, 246, 0.2);
-        }
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 18px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-        .card.featured {
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            background: linear-gradient(145deg, rgba(19, 27, 46, 0.85) 0%, rgba(13, 35, 34, 0.85) 100%);
-        }
-        .badge {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(239, 68, 68, 0.4);
-        }
-        .card-header h3 {
-            margin: 0 0 6px 0;
-            font-size: 18px;
-            font-weight: 700;
-        }
-        .description {
-            margin: 0 0 14px 0;
-            color: var(--text-muted);
-            font-size: 13px;
-            line-height: 1.4;
-        }
-        .features-list {
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 16px;
-            border-left: 3px solid var(--accent-blue);
-        }
-        .card.featured .features-list {
-            border-left-color: var(--accent-green);
-        }
-        .features-list p {
-            margin: 5px 0;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        .price-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .price-box {
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
-        }
-        .old-price {
-            font-size: 14px;
-            color: #94a3b8;
-            text-decoration: line-through;
-            font-weight: 600;
-        }
-        .price {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--accent-gold);
-        }
-        .btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: #ffffff;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-            margin-top: 12px;
-            transition: opacity 0.2s;
-        }
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-        }
-        .btn:active { opacity: 0.85; transform: scale(0.98); }
-        
-        /* Yönetici İletişim Butonu */
-        .admin-contact-btn {
-            display: block;
-            width: 100%;
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #60a5fa;
-            text-align: center;
-            padding: 14px;
-            border-radius: 16px;
-            font-size: 13px;
-            font-weight: 700;
-            text-decoration: none;
-            margin-top: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: background 0.2s;
-        }
-        .admin-contact-btn:active {
-            background: rgba(59, 130, 246, 0.2);
+            margin-bottom: 22px;
         }
 
-        /* Modal / Açılır Pencereler */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
+        .pay-btn {
+            background: var(--surface);
+            border: 1.5px solid var(--border-subtle);
+            color: var(--text-muted);
+            padding: 13px 10px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
+            gap: 7px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .modal-content {
-            background: #131b2e;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 20px;
-            padding: 22px;
-            max-width: 400px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+
+        .pay-btn.active {
+            background: rgba(59, 130, 246, 0.16);
+            border-color: var(--sapphire);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
         }
-        .modal-header {
+
+        /* VIP SSS Akordeon */
+        .faq-section {
+            margin-bottom: 16px;
+        }
+
+        .faq-item {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 13px 15px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #f1f5f9;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 10px;
+            cursor: pointer;
         }
-        .modal-header h3 { margin: 0; color: #60a5fa; font-size: 17px; }
-        .close-btn { background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; }
-        .modal-body p, .modal-body ol { font-size: 13px; color: #cbd5e1; line-height: 1.5; margin: 8px 0; }
-        .modal-body ol { padding-left: 20px; }
+
+        .faq-answer {
+            padding: 0 15px 13px 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding-top: 10px;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        .faq-arrow {
+            transition: transform 0.2s;
+            font-size: 11px;
+            color: var(--gold);
+        }
+
+        .faq-item.open .faq-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Sabit Alt Satın Alma Barı */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 14px 16px;
+            background: rgba(5, 7, 12, 0.92);
+            backdrop-filter: blur(18px);
+            border-top: 1px solid var(--border-subtle);
+            z-index: 999;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #05070c;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.15s ease;
+        }
+
+        .checkout-btn.shopier-mode {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+        }
+
+        .checkout-btn:active {
+            transform: scale(0.97);
+        }
     </style>
 </head>
 <body>
+
+    <!-- Üst VIP Karşılama & Durum Çubuğu -->
+    <div class="top-status-bar">
+        <div class="user-greeting" id="userGreeting">
+            👑 Hoş Geldin, VIP Üye
+        </div>
+        <div class="live-indicator">
+            <span class="pulse-dot"></span>
+            Sistem Aktif
+        </div>
+    </div>
+
+    <!-- Başlık -->
     <div class="header">
-        <h2>iOSEsignTR</h2>
-        <p id="user-greeting">Güvenli ve kesintisiz lisans çözümleri</p>
+        <div class="ios-universal-badge">🍏 Tüm iOS Sürümleriyle Tam Uyumlu</div>
+        <h1>iOS Sertifika VIP Mağazası</h1>
+        <p>ESign, KSign, GBox ve Scarlet ile sınırsız IPA imzalama. P12 + MobileProvision anında teslim.</p>
     </div>
 
-    <!-- 24 Saatlik Gerçek Zamanlı Ortak Sayaç Banneri -->
-    <div class="discount-banner">
-        <h4>⚡ Bugüne Özel 24 Saatlik İndirim! ⚡️</h4>
-        <div class="countdown" id="countdown-timer">23:59:59</div>
-    </div>
-
-    <!-- Bilgilendirme ve UDID Rehberi Butonları -->
-    <div class="info-buttons">
-        <button class="info-btn" onclick="openModal('modal-info')">💡 Sertifika Nedir?</button>
-        <button class="info-btn" onclick="openModal('modal-udid')">📌 UDID Nasıl Alınır?</button>
-    </div>
-
-    <!-- 3 Aylık Paket -->
-    <div class="card">
-        <div class="badge">%28 İndirim</div>
-        <div class="card-header">
-            <h3>3 Aylık Paket</h3>
-        </div>
-        <p class="description">ESign, KSign ve GBox ile tam uyumlu kurumsal sertifika.</p>
-        <div class="features-list">
-            <p>• <b>Kullanım Süresi:</b> 365 Gün Tam Erişim</p>
-            <p>• <b>Oluşum Süresi:</b> 24 - 72 Saat Arası</p>
-            <p>• <b>Garanti Durumu:</b> Standart Paket</p>
-        </div>
-        <div class="price-footer">
-            <div class="price-box">
-                <span class="old-price">⭐ 350 Yıldız</span>
-                <span class="price">⭐ 250 Yıldız</span>
-            </div>
-        </div>
-        <button class="btn" onclick="yildizIleOde(250)">Şimdi Satın Al</button>
-    </div>
-
-    <!-- 12 Aylık Pro Paket -->
-    <div class="card featured">
-        <div class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3);">VIP PRO</div>
-        <div class="card-header">
-            <h3>12 Aylık Pro Paket</h3>
-        </div>
-        <p class="description">1 yıl boyunca en kararlı kurumsal havuzlar ve VIP destek.</p>
-        <div class="features-list">
-            <p>• <b>Kullanım Süresi:</b> 365 Gün Tam Erişim</p>
-            <p>• <b>Oluşum Süresi:</b> 24 - 72 Saat Arası</p>
-            <p>• <b>Garanti Durumu:</b> Revoke Olmaz / Tam Güvence</p>
-        </div>
-        <div class="price-footer">
-            <div class="price-box">
-                <span class="old-price">⭐ 625 Yıldız</span>
-                <span class="price">⭐ 550 Yıldız</span>
-            </div>
-        </div>
-        <button class="btn btn-success" onclick="yildizIleOde(550)">Şimdi Satın Al</button>
-    </div>
-
-    <!-- Yöneticiye Yaz Butonu -->
-    <a href="https://t.me/devolepercertificate" target="_blank" class="admin-contact-btn">💬 Yöneticiyle İletişim (Destek)</a>
-
-    <!-- Sertifika Bilgi Modalı -->
-    <div id="modal-info" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>💡 Sertifika Nedir?</h3>
-                <button class="close-btn" onclick="closeModal('modal-info')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>iOS Sertifikası, Apple Developer Enterprise programı aracılığıyla cihazınıza bilgisayarsız ve jailbreaksiz bir şekilde imzasız IPA dosyaları kurmanızı sağlar.</p>
-                <p><b>Ne işe yarar?</b></p>
-                <p>• ESign, KSign veya GBox gibi imza araçlarıyla cihazınıza App Store dışından modlu uygulamalar, hileli oyunlar, özenle düzenlenmiş sosyal medya istemcileri (Instagram, YouTube vb.) yükleyebilirsiniz.</p>
-                <p>• Uygulamalarınız Apple tarafından silinmez veya sertifika süresince sorunsuz çalışır.</p>
-            </div>
+    <!-- Ortak Özellik Bilgi Kutusu -->
+    <div class="info-banner">
+        <div class="info-banner-icon">ℹ️</div>
+        <div class="info-banner-text">
+            <strong>Önemli Bilgilendirme:</strong> Her iki sertifika paketimiz de <strong>365 gün (1 yıl) boyunca aktif kullanım</strong> sunar ve tüm özellikler birebir aynıdır. Paketler arasındaki tek fark olası Apple kapanmalarına (revoke) karşı sunulan <strong>garanti süresidir</strong>.
         </div>
     </div>
 
-    <!-- UDID Rehber Modalı -->
-    <div id="modal-udid" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>📌 UDID Nasıl Alınır?</h3>
-                <button class="close-btn" onclick="closeModal('modal-udid')">&times;</button>
+    <!-- Paket Seçenekleri -->
+    <div class="plans">
+        <!-- 3 Ay Garantili Paket -->
+        <div class="plan-card" onclick="selectPlan(this, '3ay_garanti', '3 Ay Garantili Sertifika (365 Gün Kullanım)', 350, '3 Ay')">
+            <div class="plan-header">
+                <div class="plan-title-group">
+                    <div class="radio-circle"></div>
+                    <div>
+                        <div class="plan-title">3 Ay Garantili Sertifika</div>
+                        <div class="plan-sub">✓ 365 Gün Aktif Kullanım Süresi</div>
+                    </div>
+                </div>
+                <div class="price-box">
+                    <div class="price-stars">⭐ 350</div>
+                    <div class="price-note">Tek Seferlik</div>
+                </div>
             </div>
-            <div class="modal-body">
-                <ol>
-                    <li>iPhone veya iPad’inizden Safari tarayıcısını açın.</li>
-                    <li><a href="https://get.udid.io" target="_blank" style="color: #60a5fa;">https://get.udid.io</a> adresine girin.</li>
-                    <li>Sayfadaki UDID alma talimatlarını takip edin.</li>
-                    <li><b>Get my UDID</b> butonuna basın.</li>
-                    <li>Profil inecektir. İndirdikten sonra <b>Ayarlar</b>'a girip <b>VPN ve Aygıt Yönetimi</b> bölümünden profili kurun ve siteye geri yönlendirileceksiniz.</li>
-                    <li>Oradan UDID numaranızı kopyalayıp bize gönderin.</li>
-                </ol>
-                <p style="margin-top: 12px; color: #34d399; font-weight: 600;">☑ UDID numaranız tarafımıza ulaştığında sertifika işleminiz için gerekli kontroller yapılacaktır.</p>
+            <ul class="features">
+                <li><span class="check">✓</span> Tüm iOS Sürümlerine Tam Uyumlu</li>
+                <li><span class="check">✓</span> 365 Gün Boyunca Kesintisiz Kullanım</li>
+                <li><span class="check">✓</span> Anında P12 & Provision Teslimatı</li>
+                <li class="highlight-warranty">🛡️ 3 Ay (90 Gün) Birebir Değişim Garantisi</li>
+            </ul>
+        </div>
+
+        <!-- 12 Ay Garantili Paket (VIP) -->
+        <div class="plan-card vip-gold selected" onclick="selectPlan(this, '12ay_garanti', '12 Ay Garantili Sertifika (365 Gün Kullanım)', 600, '12 Ay')">
+            <div class="vip-ribbon">👑 Tam Koruma • VIP</div>
+            <div class="plan-header">
+                <div class="plan-title-group">
+                    <div class="radio-circle"></div>
+                    <div>
+                        <div class="plan-title">12 Ay Garantili Sertifika</div>
+                        <div class="plan-sub">✓ 365 Gün Aktif Kullanım Süresi</div>
+                    </div>
+                </div>
+                <div class="price-box">
+                    <div class="price-stars">⭐ 600</div>
+                    <div class="price-note">Tek Seferlik</div>
+                </div>
+            </div>
+            <ul class="features">
+                <li><span class="check">✓</span> Tüm iOS Sürümlerine Tam Uyumlu</li>
+                <li><span class="check">✓</span> 365 Gün Boyunca Kesintisiz Kullanım</li>
+                <li><span class="check">✓</span> Anında P12 & Provision Teslimatı</li>
+                <li class="highlight-warranty">🛡️ 12 Ay (365 Gün) Tam Kapsamlı Revoke Garantisi</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Ödeme Yöntemi -->
+    <div class="section-title">Ödeme Yöntemi</div>
+    <div class="pay-methods">
+        <div class="pay-btn active" id="payStars" onclick="selectPayment('stars')">
+            ⭐ Telegram Yıldızı
+        </div>
+        <div class="pay-btn" id="payShopier" onclick="selectPayment('shopier')">
+            💳 Kart / Shopier
+        </div>
+    </div>
+
+    <!-- Sıkça Sorulan Sorular -->
+    <div class="section-title">Sıkça Sorulan Sorular</div>
+    <div class="faq-section">
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>İki paket arasındaki fark tam olarak nedir?</span>
+                <span class="faq-arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                İki sertifika da cihazınızda 365 gün boyunca çalışır ve hız/özellik olarak tamamen aynıdır. Tek fark; Apple sertifikayı iptal ederse (revoke), ilk pakette 3 ay boyunca, ikinci pakette ise tam 12 ay boyunca ücretsiz yeni sertifika verilmesidir.
             </div>
         </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>Tüm iOS sürümlerinde çalışır mı?</span>
+                <span class="faq-arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                Evet, eski veya en güncel tüm iOS ve iPadOS sürümlerinde ESign, KSign, GBox ve Scarlet uygulamalarıyla sorunsuz çalışır.
+            </div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>Ödeme sonrası teslimat ne kadar sürer?</span>
+                <span class="faq-arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                Telegram Yıldızı ile yapılan ödemeler bot tarafından anında yakalanır ve siparişiniz otomatik olarak işleme alınır.
+            </div>
+        </div>
+    </div>
+
+    <!-- Sabit Alt Satın Al Butonu -->
+    <div class="bottom-bar">
+        <button class="checkout-btn" id="checkoutBtn" onclick="processOrder()">
+            ⭐ 600 Yıldız ile Hemen Satın Al
+        </button>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp;
         tg.expand();
-        
-        let user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+        tg.ready();
+
+        // Telegram Üst & Alt Bar Renklerini VIP Siyaha Uyarla
+        if (tg.setHeaderColor) tg.setHeaderColor('#05070c');
+        if (tg.setBackgroundColor) tg.setBackgroundColor('#05070c');
+
+        // Kullanıcı Bilgisini Otomatik Yakala
+        const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
         if (user && user.first_name) {
-            document.getElementById('user-greeting').innerText = `Hoş geldin, ${user.first_name}!`;
+            document.getElementById('userGreeting').innerHTML = `👑 Hoş Geldin, ${user.first_name}`;
         }
 
-        // GERÇEK ZAMANLI ORTAK 24 SAATLİK SAYAC MANTIĞI
-        function startRealtimeCountdown() {
-            let countDownDate = localStorage.getItem('global_discount_deadline');
-            let now = new Date().getTime();
-            
-            if (!countDownDate || now > parseInt(countDownDate)) {
-                countDownDate = now + (24 * 60 * 60 * 1000); // 24 saat ekle
-                localStorage.setItem('global_discount_deadline', countDownDate);
-            }
+        let selectedPlan = {
+            id: '12ay_garanti',
+            name: '12 Ay Garantili Sertifika (365 Gün Kullanım)',
+            stars: 600,
+            warranty: '12 Ay'
+        };
+        let paymentMethod = 'stars';
 
-            setInterval(function() {
-                let currentTimestamp = new Date().getTime();
-                let distance = countDownDate - currentTimestamp;
-
-                if (distance < 0) {
-                    countDownDate = new Date().getTime() + (24 * 60 * 60 * 1000);
-                    localStorage.setItem('global_discount_deadline', countDownDate);
-                    distance = countDownDate - currentTimestamp;
-                }
-
-                let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                hours = hours < 10 ? "0" + hours : hours;
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                document.getElementById("countdown-timer").innerText = hours + ":" + minutes + ":" + seconds;
-            }, 1000);
-        }
-        
-        startRealtimeCountdown();
-
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
+        function haptic(type = 'light') {
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred(type);
             }
         }
 
-        function yildizIleOde(yildizMiktari) {
-            const botUsername = "SertifikaMagazaBot";
-            window.Telegram.WebApp.openTelegramLink(`https://t.me/${botUsername}?start=odeme_${yildizMiktari}`);
+        function selectPlan(element, id, name, stars, warranty) {
+            haptic('medium');
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedPlan = { id, name, stars, warranty };
+            updateCheckoutButton();
+        }
+
+        function selectPayment(method) {
+            haptic('light');
+            paymentMethod = method;
+            document.getElementById('payStars').classList.toggle('active', method === 'stars');
+            document.getElementById('payShopier').classList.toggle('active', method === 'shopier');
+            updateCheckoutButton();
+        }
+
+        function updateCheckoutButton() {
+            const btn = document.getElementById('checkoutBtn');
+            if (paymentMethod === 'stars') {
+                btn.classList.remove('shopier-mode');
+                btn.innerHTML = `⭐ ${selectedPlan.stars} Yıldız ile Hemen Satın Al`;
+            } else {
+                btn.classList.add('shopier-mode');
+                btn.innerHTML = `💳 Shopier ile Güvenli Öde (${selectedPlan.warranty} Garanti)`;
+            }
+        }
+
+        function toggleFaq(item) {
+            haptic('light');
+            item.classList.toggle('open');
+        }
+
+        function processOrder() {
+            haptic('heavy');
+            if (paymentMethod === 'shopier') {
+                tg.openLink('https://www.shopier.com/iOSEsingTR');
+            } else {
+                // Botun otomatik yakalayacağı zenginleştirilmiş sipariş verisi
+                const payload = JSON.stringify({
+                    action: 'buy_ios_cert',
+                    plan_id: selectedPlan.id,
+                    plan_name: selectedPlan.name,
+                    stars_amount: selectedPlan.stars,
+                    warranty: selectedPlan.warranty,
+                    usage_days: 365,
+                    user_id: user ? user.id : null
+                });
+                tg.sendData(payload);
+            }
         }
     </script>
 </body>
