@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iOS Sertifika VIP Mağazası</title>
+    <title>iOS Sertifika VIP Mağazası v3</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-dark: #05070c;
-            --surface: rgba(17, 22, 34, 0.78);
-            --surface-hover: rgba(24, 31, 48, 0.92);
+            --bg-dark: #030508;
+            --surface: rgba(15, 20, 32, 0.85);
+            --surface-hover: rgba(22, 29, 45, 0.95);
             --border-subtle: rgba(255, 255, 255, 0.08);
             --gold: #f59e0b;
             --gold-light: #fbbf24;
-            --gold-glow: rgba(245, 158, 11, 0.25);
+            --gold-glow: rgba(245, 158, 11, 0.3);
             --sapphire: #3b82f6;
-            --sapphire-glow: rgba(59, 130, 246, 0.28);
+            --sapphire-glow: rgba(59, 130, 246, 0.3);
             --emerald: #10b981;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
@@ -32,35 +32,32 @@
         body {
             background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(circle at 10% 0%, rgba(59, 130, 246, 0.16) 0%, transparent 45%),
-                radial-gradient(circle at 90% 25%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+                radial-gradient(circle at 15% 0%, rgba(59, 130, 246, 0.18) 0%, transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.14) 0%, transparent 40%),
+                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 14px 16px 105px 16px;
+            padding: 14px 16px 110px 16px;
             overflow-x: hidden;
         }
 
-        /* Üst Kullanıcı & Canlı Durum Çubuğu */
+        /* Üst Durum Çubuğu */
         .top-status-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
-            padding: 8px 12px;
+            padding: 9px 14px;
             margin-bottom: 16px;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
         }
 
         .user-greeting {
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .live-indicator {
@@ -68,10 +65,10 @@
             align-items: center;
             gap: 6px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--emerald);
             background: rgba(16, 185, 129, 0.12);
-            padding: 4px 9px;
+            padding: 4px 10px;
             border-radius: 20px;
         }
 
@@ -80,40 +77,40 @@
             height: 7px;
             background-color: var(--emerald);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--emerald);
-            animation: pulse 1.8s infinite;
+            box-shadow: 0 0 10px var(--emerald);
+            animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.7; }
-            50% { transform: scale(1.25); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.7; }
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
         }
 
         /* Başlık Alanı */
         .header {
             text-align: center;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         .ios-universal-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(59, 130, 246, 0.18));
-            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(59, 130, 246, 0.2));
+            border: 1px solid rgba(245, 158, 11, 0.4);
             color: var(--gold-light);
-            padding: 5px 14px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 10px;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
         }
 
         .header h1 {
-            font-size: 25px;
-            font-weight: 800;
+            font-size: 26px;
+            font-weight: 900;
             letter-spacing: -0.6px;
             background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
@@ -124,43 +121,42 @@
         .header p {
             font-size: 13px;
             color: var(--text-muted);
-            line-height: 1.45;
-            max-width: 340px;
+            line-height: 1.5;
+            max-width: 350px;
             margin: 0 auto;
         }
 
-        /* Ortak Özellikler Özeti */
+        /* Bilgi Banner */
         .info-banner {
             background: rgba(59, 130, 246, 0.08);
-            border: 1px solid rgba(59, 130, 246, 0.22);
-            border-radius: 14px;
-            padding: 12px 14px;
-            margin-bottom: 18px;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 20px;
             display: flex;
+            gap: 12px;
             align-items: flex-start;
-            gap: 10px;
         }
 
-        .info-banner-icon {
+        .info-icon {
             font-size: 18px;
-            line-height: 1.2;
         }
 
-        .info-banner-text {
+        .info-text {
             font-size: 12px;
             color: #cbd5e1;
-            line-height: 1.45;
+            line-height: 1.5;
         }
 
-        .info-banner-text strong {
-            color: #ffffff;
+        .info-text strong {
+            color: #fff;
         }
 
-        /* Paket Kartları */
+        /* Paketler */
         .plans {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
             margin-bottom: 20px;
         }
 
@@ -169,37 +165,37 @@
             background: var(--surface);
             border: 1.5px solid var(--border-subtle);
             border-radius: 20px;
-            padding: 18px;
+            padding: 20px;
             backdrop-filter: blur(16px);
-            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.25s ease;
             cursor: pointer;
         }
 
         .plan-card.selected {
             border-color: var(--sapphire);
             background: var(--surface-hover);
-            box-shadow: 0 8px 28px var(--sapphire-glow);
+            box-shadow: 0 10px 30px var(--sapphire-glow);
             transform: translateY(-2px);
         }
 
         .plan-card.vip-gold {
-            border-color: rgba(245, 158, 11, 0.35);
+            border-color: rgba(245, 158, 11, 0.4);
         }
 
         .plan-card.vip-gold.selected {
             border-color: var(--gold);
-            box-shadow: 0 8px 30px var(--gold-glow);
+            box-shadow: 0 10px 30px var(--gold-glow);
         }
 
         .vip-ribbon {
             position: absolute;
-            top: -11px;
-            right: 16px;
+            top: -12px;
+            right: 18px;
             background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #05070c;
+            color: #030508;
             font-size: 10px;
-            font-weight: 800;
-            padding: 4px 11px;
+            font-weight: 900;
+            padding: 4px 12px;
             border-radius: 10px;
             text-transform: uppercase;
             letter-spacing: 0.6px;
@@ -210,18 +206,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .plan-title-group {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .radio-circle {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             border: 2px solid var(--text-muted);
             display: flex;
@@ -264,8 +260,8 @@
         .plan-sub {
             font-size: 12px;
             color: var(--emerald);
-            font-weight: 600;
-            margin-top: 2px;
+            font-weight: 700;
+            margin-top: 3px;
         }
 
         .price-box {
@@ -273,8 +269,8 @@
         }
 
         .price-stars {
-            font-size: 20px;
-            font-weight: 800;
+            font-size: 22px;
+            font-weight: 900;
             color: var(--gold-light);
             display: flex;
             align-items: center;
@@ -291,7 +287,7 @@
         .features {
             list-style: none;
             border-top: 1px solid var(--border-subtle);
-            padding-top: 12px;
+            padding-top: 14px;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -307,111 +303,63 @@
 
         .features li .check {
             color: var(--emerald);
-            font-weight: 800;
+            font-weight: 900;
         }
 
         .features li.highlight-warranty {
             color: var(--gold-light);
-            font-weight: 600;
+            font-weight: 700;
         }
 
         /* Ödeme Yöntemi */
         .section-title {
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: 800;
             color: var(--text-muted);
             margin-bottom: 10px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
         }
 
         .pay-methods {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
         }
 
         .pay-btn {
             background: var(--surface);
             border: 1.5px solid var(--border-subtle);
             color: var(--text-muted);
-            padding: 13px 10px;
+            padding: 14px 10px;
             border-radius: 14px;
             font-size: 13px;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
+            gap: 8px;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .pay-btn.active {
-            background: rgba(59, 130, 246, 0.16);
+            background: rgba(59, 130, 246, 0.18);
             border-color: var(--sapphire);
             color: #ffffff;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
         }
 
-        /* VIP SSS Akordeon */
-        .faq-section {
-            margin-bottom: 16px;
-        }
-
-        .faq-item {
-            background: var(--surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            margin-bottom: 8px;
-            overflow: hidden;
-        }
-
-        .faq-question {
-            padding: 13px 15px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #f1f5f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .faq-answer {
-            padding: 0 15px 13px 15px;
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.5;
-            display: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            padding-top: 10px;
-        }
-
-        .faq-item.open .faq-answer {
-            display: block;
-        }
-
-        .faq-arrow {
-            transition: transform 0.2s;
-            font-size: 11px;
-            color: var(--gold);
-        }
-
-        .faq-item.open .faq-arrow {
-            transform: rotate(180deg);
-        }
-
-        /* Sabit Alt Satın Alma Barı */
+        /* Sabit Alt Satın Al Barı */
         .bottom-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             padding: 14px 16px;
-            background: rgba(5, 7, 12, 0.92);
-            backdrop-filter: blur(18px);
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(20px);
             border-top: 1px solid var(--border-subtle);
             z-index: 999;
         }
@@ -419,14 +367,14 @@
         .checkout-btn {
             width: 100%;
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: #05070c;
+            color: #030508;
             border: none;
-            padding: 15px;
-            border-radius: 15px;
+            padding: 16px;
+            border-radius: 16px;
             font-size: 15px;
-            font-weight: 800;
+            font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+            box-shadow: 0 6px 22px rgba(245, 158, 11, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -437,7 +385,7 @@
         .checkout-btn.shopier-mode {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: #ffffff;
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+            box-shadow: 0 6px 22px rgba(59, 130, 246, 0.4);
         }
 
         .checkout-btn:active {
@@ -447,11 +395,9 @@
 </head>
 <body>
 
-    <!-- Üst VIP Karşılama & Durum Çubuğu -->
+    <!-- Üst Karşılama & Durum -->
     <div class="top-status-bar">
-        <div class="user-greeting" id="userGreeting">
-            👑 Hoş Geldin, VIP Üye
-        </div>
+        <div class="user-greeting" id="userGreeting">👑 Hoş Geldin, VIP Üye</div>
         <div class="live-indicator">
             <span class="pulse-dot"></span>
             Sistem Aktif
@@ -462,27 +408,27 @@
     <div class="header">
         <div class="ios-universal-badge">🍏 Tüm iOS Sürümleriyle Tam Uyumlu</div>
         <h1>iOS Sertifika VIP Mağazası</h1>
-        <p>ESign, KSign, GBox ve Scarlet ile sınırsız IPA imzalama. P12 + MobileProvision anında teslim.</p>
+        <p>ESign, KSign, GBox ve Scarlet ile sınırsız IPA imzalama özgürlüğü.</p>
     </div>
 
-    <!-- Ortak Özellik Bilgi Kutusu -->
+    <!-- Bilgilendirme Banner -->
     <div class="info-banner">
-        <div class="info-banner-icon">ℹ️</div>
-        <div class="info-banner-text">
-            <strong>Önemli Bilgilendirme:</strong> Her iki sertifika paketimiz de <strong>365 gün (1 yıl) boyunca aktif kullanım</strong> sunar ve tüm özellikler birebir aynıdır. Paketler arasındaki tek fark olası Apple kapanmalarına (revoke) karşı sunulan <strong>garanti süresidir</strong>.
+        <div class="info-icon">ℹ️</div>
+        <div class="info-text">
+            Her iki paketimiz de <strong>365 gün (1 yıl) boyunca aktif kullanım</strong> sunar. Paketler arasındaki tek fark, Apple revoke (kapanma) durumlarına karşı sunulan <strong>garanti süresidir</strong>.
         </div>
     </div>
 
     <!-- Paket Seçenekleri -->
     <div class="plans">
-        <!-- 3 Ay Garantili Paket -->
+        <!-- 3 Aylık Paket (350 Yıldız) -->
         <div class="plan-card" onclick="selectPlan(this, '3ay_garanti', '3 Ay Garantili Sertifika (365 Gün Kullanım)', 350, '3 Ay')">
             <div class="plan-header">
                 <div class="plan-title-group">
                     <div class="radio-circle"></div>
                     <div>
                         <div class="plan-title">3 Ay Garantili Sertifika</div>
-                        <div class="plan-sub">✓ 365 Gün Aktif Kullanım Süresi</div>
+                        <div class="plan-sub">✓ 365 Gün Aktif Kullanım</div>
                     </div>
                 </div>
                 <div class="price-box">
@@ -492,13 +438,13 @@
             </div>
             <ul class="features">
                 <li><span class="check">✓</span> Tüm iOS Sürümlerine Tam Uyumlu</li>
-                <li><span class="check">✓</span> 365 Gün Boyunca Kesintisiz Kullanım</li>
-                <li><span class="check">✓</span> Anında P12 & Provision Teslimatı</li>
-                <li class="highlight-warranty">🛡️ 3 Ay (90 Gün) Birebir Değişim Garantisi</li>
+                <li><span class="check">✓</span> 365 Gün Kesintisiz Uygulama Kullanımı</li>
+                <li><span class="check">✓</span> Anında P12 & Provision Teslimat</li>
+                <li class="highlight-warranty">🛡️ 3 Ay Birebir Değişim Garantisi</li>
             </ul>
         </div>
 
-        <!-- 12 Ay Garantili Paket (VIP) -->
+        <!-- 12 Aylık Pro Paket (600 Yıldız) -->
         <div class="plan-card vip-gold selected" onclick="selectPlan(this, '12ay_garanti', '12 Ay Garantili Sertifika (365 Gün Kullanım)', 600, '12 Ay')">
             <div class="vip-ribbon">👑 Tam Koruma • VIP</div>
             <div class="plan-header">
@@ -506,7 +452,7 @@
                     <div class="radio-circle"></div>
                     <div>
                         <div class="plan-title">12 Ay Garantili Sertifika</div>
-                        <div class="plan-sub">✓ 365 Gün Aktif Kullanım Süresi</div>
+                        <div class="plan-sub">✓ 365 Gün Aktif Kullanım</div>
                     </div>
                 </div>
                 <div class="price-box">
@@ -516,9 +462,9 @@
             </div>
             <ul class="features">
                 <li><span class="check">✓</span> Tüm iOS Sürümlerine Tam Uyumlu</li>
-                <li><span class="check">✓</span> 365 Gün Boyunca Kesintisiz Kullanım</li>
-                <li><span class="check">✓</span> Anında P12 & Provision Teslimatı</li>
-                <li class="highlight-warranty">🛡️ 12 Ay (365 Gün) Tam Kapsamlı Revoke Garantisi</li>
+                <li><span class="check">✓</span> 365 Gün Kesintisiz Uygulama Kullanımı</li>
+                <li><span class="check">✓</span> Anında P12 & Provision Teslimat</li>
+                <li class="highlight-warranty">🛡️ 12 Ay Tam Kapsamlı Revoke Garantisi</li>
             </ul>
         </div>
     </div>
@@ -534,38 +480,6 @@
         </div>
     </div>
 
-    <!-- Sıkça Sorulan Sorular -->
-    <div class="section-title">Sıkça Sorulan Sorular</div>
-    <div class="faq-section">
-        <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-question">
-                <span>İki paket arasındaki fark tam olarak nedir?</span>
-                <span class="faq-arrow">▼</span>
-            </div>
-            <div class="faq-answer">
-                İki sertifika da cihazınızda 365 gün boyunca çalışır ve hız/özellik olarak tamamen aynıdır. Tek fark; Apple sertifikayı iptal ederse (revoke), ilk pakette 3 ay boyunca, ikinci pakette ise tam 12 ay boyunca ücretsiz yeni sertifika verilmesidir.
-            </div>
-        </div>
-        <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-question">
-                <span>Tüm iOS sürümlerinde çalışır mı?</span>
-                <span class="faq-arrow">▼</span>
-            </div>
-            <div class="faq-answer">
-                Evet, eski veya en güncel tüm iOS ve iPadOS sürümlerinde ESign, KSign, GBox ve Scarlet uygulamalarıyla sorunsuz çalışır.
-            </div>
-        </div>
-        <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-question">
-                <span>Ödeme sonrası teslimat ne kadar sürer?</span>
-                <span class="faq-arrow">▼</span>
-            </div>
-            <div class="faq-answer">
-                Telegram Yıldızı ile yapılan ödemeler bot tarafından anında yakalanır ve siparişiniz otomatik olarak işleme alınır.
-            </div>
-        </div>
-    </div>
-
     <!-- Sabit Alt Satın Al Butonu -->
     <div class="bottom-bar">
         <button class="checkout-btn" id="checkoutBtn" onclick="processOrder()">
@@ -578,11 +492,9 @@
         tg.expand();
         tg.ready();
 
-        // Telegram Üst & Alt Bar Renklerini VIP Siyaha Uyarla
-        if (tg.setHeaderColor) tg.setHeaderColor('#05070c');
-        if (tg.setBackgroundColor) tg.setBackgroundColor('#05070c');
+        if (tg.setHeaderColor) tg.setHeaderColor('#030508');
+        if (tg.setBackgroundColor) tg.setBackgroundColor('#030508');
 
-        // Kullanıcı Bilgisini Otomatik Yakala
         const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
         if (user && user.first_name) {
             document.getElementById('userGreeting').innerHTML = `👑 Hoş Geldin, ${user.first_name}`;
@@ -597,9 +509,7 @@
         let paymentMethod = 'stars';
 
         function haptic(type = 'light') {
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred(type);
-            }
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred(type);
         }
 
         function selectPlan(element, id, name, stars, warranty) {
@@ -629,17 +539,11 @@
             }
         }
 
-        function toggleFaq(item) {
-            haptic('light');
-            item.classList.toggle('open');
-        }
-
         function processOrder() {
             haptic('heavy');
             if (paymentMethod === 'shopier') {
                 tg.openLink('https://www.shopier.com/iOSEsingTR');
             } else {
-                // Botun otomatik yakalayacağı zenginleştirilmiş sipariş verisi
                 const payload = JSON.stringify({
                     action: 'buy_ios_cert',
                     plan_id: selectedPlan.id,
