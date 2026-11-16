@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iOS Sertifika VIP Mağazası v3</title>
+    <title>iOS Sertifika VIP Mağazası</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-dark: #030508;
-            --surface: rgba(15, 20, 32, 0.85);
-            --surface-hover: rgba(22, 29, 45, 0.95);
+            --surface: rgba(15, 20, 32, 0.88);
+            --surface-hover: rgba(22, 29, 45, 0.96);
             --border-subtle: rgba(255, 255, 255, 0.08);
             --gold: #f59e0b;
             --gold-light: #fbbf24;
@@ -138,19 +138,13 @@
             align-items: flex-start;
         }
 
-        .info-icon {
-            font-size: 18px;
-        }
-
+        .info-icon { font-size: 18px; }
         .info-text {
             font-size: 12px;
             color: #cbd5e1;
             line-height: 1.5;
         }
-
-        .info-text strong {
-            color: #fff;
-        }
+        .info-text strong { color: #fff; }
 
         /* Paketler */
         .plans {
@@ -247,9 +241,7 @@
             transition: opacity 0.2s;
         }
 
-        .plan-card.selected .radio-circle::after {
-            opacity: 1;
-        }
+        .plan-card.selected .radio-circle::after { opacity: 1; }
 
         .plan-title {
             font-size: 17px;
@@ -264,10 +256,7 @@
             margin-top: 3px;
         }
 
-        .price-box {
-            text-align: right;
-        }
-
+        .price-box { text-align: right; }
         .price-stars {
             font-size: 22px;
             font-weight: 900;
@@ -277,7 +266,6 @@
             justify-content: flex-end;
             gap: 4px;
         }
-
         .price-note {
             font-size: 11px;
             color: var(--text-muted);
@@ -301,15 +289,8 @@
             gap: 8px;
         }
 
-        .features li .check {
-            color: var(--emerald);
-            font-weight: 900;
-        }
-
-        .features li.highlight-warranty {
-            color: var(--gold-light);
-            font-weight: 700;
-        }
+        .features li .check { color: var(--emerald); font-weight: 900; }
+        .features li.highlight-warranty { color: var(--gold-light); font-weight: 700; }
 
         /* Ödeme Yöntemi */
         .section-title {
@@ -388,9 +369,7 @@
             box-shadow: 0 6px 22px rgba(59, 130, 246, 0.4);
         }
 
-        .checkout-btn:active {
-            transform: scale(0.97);
-        }
+        .checkout-btn:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
@@ -422,7 +401,7 @@
     <!-- Paket Seçenekleri -->
     <div class="plans">
         <!-- 3 Aylık Paket (350 Yıldız) -->
-        <div class="plan-card" onclick="selectPlan(this, '3ay_garanti', '3 Ay Garantili Sertifika (365 Gün Kullanım)', 350, '3 Ay')">
+        <div class="plan-card" onclick="selectPlan(this, '3ay_garanti', 350, '3 Ay')">
             <div class="plan-header">
                 <div class="plan-title-group">
                     <div class="radio-circle"></div>
@@ -445,7 +424,7 @@
         </div>
 
         <!-- 12 Aylık Pro Paket (600 Yıldız) -->
-        <div class="plan-card vip-gold selected" onclick="selectPlan(this, '12ay_garanti', '12 Ay Garantili Sertifika (365 Gün Kullanım)', 600, '12 Ay')">
+        <div class="plan-card vip-gold selected" onclick="selectPlan(this, '12ay_garanti', 600, '12 Ay')">
             <div class="vip-ribbon">👑 Tam Koruma • VIP</div>
             <div class="plan-header">
                 <div class="plan-title-group">
@@ -500,23 +479,20 @@
             document.getElementById('userGreeting').innerHTML = `👑 Hoş Geldin, ${user.first_name}`;
         }
 
-        let selectedPlan = {
-            id: '12ay_garanti',
-            name: '12 Ay Garantili Sertifika (365 Gün Kullanım)',
-            stars: 600,
-            warranty: '12 Ay'
-        };
+        let selectedStars = 600;
+        let selectedWarranty = '12 Ay';
         let paymentMethod = 'stars';
 
         function haptic(type = 'light') {
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred(type);
         }
 
-        function selectPlan(element, id, name, stars, warranty) {
+        function selectPlan(element, id, stars, warranty) {
             haptic('medium');
             document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
             element.classList.add('selected');
-            selectedPlan = { id, name, stars, warranty };
+            selectedStars = stars;
+            selectedWarranty = warranty;
             updateCheckoutButton();
         }
 
@@ -532,10 +508,10 @@
             const btn = document.getElementById('checkoutBtn');
             if (paymentMethod === 'stars') {
                 btn.classList.remove('shopier-mode');
-                btn.innerHTML = `⭐ ${selectedPlan.stars} Yıldız ile Hemen Satın Al`;
+                btn.innerHTML = `⭐ ${selectedStars} Yıldız ile Hemen Satın Al`;
             } else {
                 btn.classList.add('shopier-mode');
-                btn.innerHTML = `💳 Shopier ile Güvenli Öde (${selectedPlan.warranty} Garanti)`;
+                btn.innerHTML = `💳 Shopier ile Güvenli Öde (${selectedWarranty} Garanti)`;
             }
         }
 
@@ -544,16 +520,9 @@
             if (paymentMethod === 'shopier') {
                 tg.openLink('https://www.shopier.com/iOSEsingTR');
             } else {
-                const payload = JSON.stringify({
-                    action: 'buy_ios_cert',
-                    plan_id: selectedPlan.id,
-                    plan_name: selectedPlan.name,
-                    stars_amount: selectedPlan.stars,
-                    warranty: selectedPlan.warranty,
-                    usage_days: 365,
-                    user_id: user ? user.id : null
-                });
-                tg.sendData(payload);
+                // Senin kodundaki çalışan kesin yöntem: Doğrudan botu tetikleyen start parametresi
+                const botUsername = "SertifikaMagazaBot";
+                tg.openTelegramLink(`https://t.me/${botUsername}?start=odeme_${selectedStars}`);
             }
         }
     </script>
